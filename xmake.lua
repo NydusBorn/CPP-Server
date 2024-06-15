@@ -1,10 +1,13 @@
 add_rules("mode.debug", "mode.release")
 add_requires("asio", "nlohmann_json")
-target("Granit")
+target("Server")
     set_kind("binary")
     add_files("src/*.cpp")
     add_packages("asio", "nlohmann_json")
-
+target("Client")
+    set_kind("binary")
+    add_files("client/*.cpp")
+    add_packages("asio")
 --
 -- If you want to known more usage about xmake, please see https://xmake.io
 --

@@ -5,39 +5,72 @@
 # project
 cmake_minimum_required(VERSION 3.15.0)
 cmake_policy(SET CMP0091 NEW)
-project(Granit LANGUAGES CXX)
+project(Client LANGUAGES CXX)
 
 # target
-add_executable(Granit "")
-set_target_properties(Granit PROPERTIES OUTPUT_NAME "Granit")
-set_target_properties(Granit PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/build/linux/x86_64/release")
-target_include_directories(Granit SYSTEM PRIVATE
+add_executable(Client "")
+set_target_properties(Client PROPERTIES OUTPUT_NAME "Client")
+set_target_properties(Client PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/build/linux/x86_64/release")
+target_include_directories(Client SYSTEM PRIVATE
     /home/nydus/.xmake/packages/a/asio/1.30.2/c1047cd667c14a44bea718715a77a7f5/include
-    /home/nydus/.xmake/packages/n/nlohmann_json/v3.11.3/ec1183311a224b34b5c138edda96fdde/include
 )
-target_compile_options(Granit PRIVATE
+target_compile_options(Client PRIVATE
     $<$<COMPILE_LANGUAGE:C>:-m64>
     $<$<COMPILE_LANGUAGE:CXX>:-m64>
     $<$<COMPILE_LANGUAGE:C>:-DNDEBUG>
     $<$<COMPILE_LANGUAGE:CXX>:-DNDEBUG>
 )
 if(MSVC)
-    target_compile_options(Granit PRIVATE $<$<CONFIG:Release>:-Ox -fp:fast>)
+    target_compile_options(Client PRIVATE $<$<CONFIG:Release>:-Ox -fp:fast>)
 else()
-    target_compile_options(Granit PRIVATE -O3)
+    target_compile_options(Client PRIVATE -O3)
 endif()
 if(MSVC)
 else()
-    target_compile_options(Granit PRIVATE -fvisibility=hidden)
+    target_compile_options(Client PRIVATE -fvisibility=hidden)
 endif()
 if(MSVC)
-    set_property(TARGET Granit PROPERTY
+    set_property(TARGET Client PROPERTY
         MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif()
-target_link_options(Granit PRIVATE
+target_link_options(Client PRIVATE
     -m64
 )
-target_sources(Granit PRIVATE
+target_sources(Client PRIVATE
+    client/client.cpp
+)
+
+# target
+add_executable(Server "")
+set_target_properties(Server PROPERTIES OUTPUT_NAME "Server")
+set_target_properties(Server PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/build/linux/x86_64/release")
+target_include_directories(Server SYSTEM PRIVATE
+    /home/nydus/.xmake/packages/a/asio/1.30.2/c1047cd667c14a44bea718715a77a7f5/include
+    /home/nydus/.xmake/packages/n/nlohmann_json/v3.11.3/ec1183311a224b34b5c138edda96fdde/include
+)
+target_compile_options(Server PRIVATE
+    $<$<COMPILE_LANGUAGE:C>:-m64>
+    $<$<COMPILE_LANGUAGE:CXX>:-m64>
+    $<$<COMPILE_LANGUAGE:C>:-DNDEBUG>
+    $<$<COMPILE_LANGUAGE:CXX>:-DNDEBUG>
+)
+if(MSVC)
+    target_compile_options(Server PRIVATE $<$<CONFIG:Release>:-Ox -fp:fast>)
+else()
+    target_compile_options(Server PRIVATE -O3)
+endif()
+if(MSVC)
+else()
+    target_compile_options(Server PRIVATE -fvisibility=hidden)
+endif()
+if(MSVC)
+    set_property(TARGET Server PROPERTY
+        MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif()
+target_link_options(Server PRIVATE
+    -m64
+)
+target_sources(Server PRIVATE
     src/main.cpp
 )
 
