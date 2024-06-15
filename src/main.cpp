@@ -22,6 +22,10 @@ void ReadHandler(const asio::error_code& ec, std::size_t bytes_transferred) {
     std::cout << buff.data() << std::endl;
 }
 
+void WorkerThread(){
+
+}
+
 int main(int argc, char** argv) {
     asio::io_service service;
     using namespace asio::ip;
