@@ -19,10 +19,10 @@ int main() {
 
         // Для демонстрации: чтение сообщения от сервера
         for (;;) {
-            char buf[512];
+            std::vector<char> buf(512);
             std::error_code error;
 
-            size_t len = socket.read_some(asio::buffer(buf), error);
+            socket.read_some(asio::buffer(buf), error);
 
             if (error == asio::error::eof) {
                 std::cout << "Connection closed by server" << std::endl;
@@ -31,7 +31,7 @@ int main() {
                 throw asio::system_error(error); // Некоторые другие ошибки.
             }
 
-            std::cout.write(buf, len);
+            std::cout << buf.data() << std::endl;
         }
     } catch (std::exception& e) {
         std::cerr << "Exception: " << e.what() << std::endl;

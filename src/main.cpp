@@ -6,10 +6,18 @@
 std::vector<char> buff(256);
 
 void SendHandler(const asio::error_code& ec, std::size_t bytes_transferred) {
+    if (ec) {
+        std::cout << ec.message() << std::endl;
+        return;
+    }
     std::cout << "Sent a message" << std::endl;
 }
 
 void ReadHandler(const asio::error_code& ec, std::size_t bytes_transferred) {
+    if (ec) {
+        std::cout << ec.message() << std::endl;
+        return;
+    }
     std::cout << "Received a message" << std::endl;
     std::cout << buff.data() << std::endl;
 }
