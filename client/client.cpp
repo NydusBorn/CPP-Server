@@ -32,6 +32,15 @@ int main() {
             }
 
             std::cout << buf.data() << std::endl;
+
+            // Отправка сообщения обратно серверу
+            std::string message = "again";
+            asio::write(socket, asio::buffer(message), error);
+
+            // Проверка на ошибки отправки
+            if (error) {
+                throw asio::system_error(error); // Обработка ошибок при отправке
+            }
         }
     } catch (std::exception& e) {
         std::cerr << "Exception: " << e.what() << std::endl;
