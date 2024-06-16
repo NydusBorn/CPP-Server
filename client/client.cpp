@@ -1,10 +1,11 @@
 #include <asio.hpp>
 #include <iostream>
+#include <thread>
+// g++ -std=c++17 -DASIO_STANDALONE -I C:\programs\vcpkg\installed\x64-windows\include main.cpp -o main.exe -lws2_32
 // g++ -std=c++11 -DASIO_STANDALONE -I C:\programs\vcpkg\installed\x64-windows\include client.cpp -o main.exe -lws2_32
-
-int main() {
-    try {
-        // Создание I/O контекста
+void Client(){
+    try{
+     // Создание I/O контекста
         asio::io_context io_context;
 
         // Создание и резолвинг TCP endpoint. Предполагается, что сервер слушает на порту 4000.
@@ -45,6 +46,14 @@ int main() {
     } catch (std::exception& e) {
         std::cerr << "Exception: " << e.what() << std::endl;
     }
-
+}
+int main() {
+    for(int i = 0; i< 40; i++){
+        std::thread t(Client);
+        t.detach();
+    }
+    while(true){
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
     return 0;
 }
