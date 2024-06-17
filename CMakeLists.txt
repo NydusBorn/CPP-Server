@@ -20,6 +20,8 @@ target_compile_options(Client PRIVATE
     $<$<COMPILE_LANGUAGE:C>:-DNDEBUG>
     $<$<COMPILE_LANGUAGE:CXX>:-DNDEBUG>
 )
+set_target_properties(Client PROPERTIES CXX_EXTENSIONS OFF)
+target_compile_features(Client PRIVATE cxx_std_23)
 if(MSVC)
     target_compile_options(Client PRIVATE $<$<CONFIG:Release>:-Ox -fp:fast>)
 else()
@@ -54,6 +56,8 @@ target_compile_options(Server PRIVATE
     $<$<COMPILE_LANGUAGE:C>:-DNDEBUG>
     $<$<COMPILE_LANGUAGE:CXX>:-DNDEBUG>
 )
+set_target_properties(Server PROPERTIES CXX_EXTENSIONS OFF)
+target_compile_features(Server PRIVATE cxx_std_23)
 if(MSVC)
     target_compile_options(Server PRIVATE $<$<CONFIG:Release>:-Ox -fp:fast>)
 else()
@@ -71,6 +75,6 @@ target_link_options(Server PRIVATE
     -m64
 )
 target_sources(Server PRIVATE
-    src/main.cpp
+    server/main.cpp
 )
 

@@ -37,7 +37,7 @@ build/linux/x86_64/release/Granit: build/.objs/Granit/linux/x86_64/release/src/m
 	@mkdir -p build/linux/x86_64/release
 	$(VV)$(Granit_LD) -o build/linux/x86_64/release/Granit build/.objs/Granit/linux/x86_64/release/src/main.cpp.o $(Granit_LDFLAGS)
 
-build/.objs/Granit/linux/x86_64/release/src/main.cpp.o: src/main.cpp
+build/.objs/Granit/linux/x86_64/release/src/main.cpp.o: server
 	@echo compiling.release src/main.cpp
 	@mkdir -p build/.objs/Granit/linux/x86_64/release/src
 	$(VV)$(Granit_CXX) -c $(Granit_CXXFLAGS) -o build/.objs/Granit/linux/x86_64/release/src/main.cpp.o src/main.cpp
