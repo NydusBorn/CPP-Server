@@ -18,7 +18,7 @@ target_include_directories(Client SYSTEM PRIVATE
     /home/nydus/.xmake/packages/i/imgui/v1.90.8/2f20ce333d2141edbe6a67692a07023c/include/imgui
     /home/nydus/.xmake/packages/i/imgui/v1.90.8/2f20ce333d2141edbe6a67692a07023c/include/backends
     /home/nydus/.xmake/packages/i/imgui/v1.90.8/2f20ce333d2141edbe6a67692a07023c/include/misc/cpp
-    /home/nydus/.xmake/packages/o/openssl3/3.0.7/8aaa08615b8740ada8faf167c0cbf065/include
+    /home/nydus/.xmake/packages/c/cryptopp/8.9.0/9c19a519fd66433683eed4f0bbb0df1a/include
 )
 target_compile_options(Client PRIVATE
     $<$<COMPILE_LANGUAGE:C>:-m64>
@@ -44,15 +44,12 @@ endif()
 target_link_libraries(Client PRIVATE
     rpc
     imgui
-    ssl
-    crypto
-    pthread
-    dl
+    cryptopp
 )
 target_link_directories(Client PRIVATE
     /home/nydus/.xmake/packages/r/rpclib/v2.3.0/cd9a29cac23a478da714214c55a59c0c/lib
     /home/nydus/.xmake/packages/i/imgui/v1.90.8/2f20ce333d2141edbe6a67692a07023c/lib
-    /home/nydus/.xmake/packages/o/openssl3/3.0.7/8aaa08615b8740ada8faf167c0cbf065/lib64
+    /home/nydus/.xmake/packages/c/cryptopp/8.9.0/9c19a519fd66433683eed4f0bbb0df1a/lib
 )
 target_link_options(Client PRIVATE
     -m64
@@ -72,7 +69,7 @@ target_include_directories(Server SYSTEM PRIVATE
     /home/nydus/.xmake/packages/i/imgui/v1.90.8/2f20ce333d2141edbe6a67692a07023c/include/imgui
     /home/nydus/.xmake/packages/i/imgui/v1.90.8/2f20ce333d2141edbe6a67692a07023c/include/backends
     /home/nydus/.xmake/packages/i/imgui/v1.90.8/2f20ce333d2141edbe6a67692a07023c/include/misc/cpp
-    /home/nydus/.xmake/packages/o/openssl3/3.0.7/8aaa08615b8740ada8faf167c0cbf065/include
+    /home/nydus/.xmake/packages/c/cryptopp/8.9.0/9c19a519fd66433683eed4f0bbb0df1a/include
 )
 target_compile_options(Server PRIVATE
     $<$<COMPILE_LANGUAGE:C>:-m64>
@@ -98,15 +95,12 @@ endif()
 target_link_libraries(Server PRIVATE
     rpc
     imgui
-    ssl
-    crypto
-    pthread
-    dl
+    cryptopp
 )
 target_link_directories(Server PRIVATE
     /home/nydus/.xmake/packages/r/rpclib/v2.3.0/cd9a29cac23a478da714214c55a59c0c/lib
     /home/nydus/.xmake/packages/i/imgui/v1.90.8/2f20ce333d2141edbe6a67692a07023c/lib
-    /home/nydus/.xmake/packages/o/openssl3/3.0.7/8aaa08615b8740ada8faf167c0cbf065/lib64
+    /home/nydus/.xmake/packages/c/cryptopp/8.9.0/9c19a519fd66433683eed4f0bbb0df1a/lib
 )
 target_link_options(Server PRIVATE
     -m64

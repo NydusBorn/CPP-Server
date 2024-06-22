@@ -1,57 +1,32 @@
 #include <iostream>
 #include <nlohmann/json.hpp>
 #include <rpc/client.h>
-#include <openssl/rand.h>
-#include <openssl/aes.h>
-#include <openssl/evp.h>
-#include <openssl/rsa.h>
-#include <openssl/pem.h>
-#include <openssl/encoder.h>
-#include <openssl/decoder.h>
-#include <fstream>
+#include <cryptopp/rsa.h>
+#include <cryptopp/rng.h>
+#include <cryptopp/osrng.h>
 
 int main() {
     rpc::client client("127.0.0.1", 4000);
 
-    auto pkey = EVP_RSA_gen(4096);
-    if (!pkey) {
-        std::cerr << "Failed to generate RSA key" << std::endl;
-        return 1;
-    }
-
-    FILE* tmp = tmpfile();
-
-    BIO *bp = BIO_new_fp(tmp, BIO_NOCLOSE);
-    PEM_write_bio_PUBKEY(bp, pkey);
-    BIO_free(bp);
-    std::string pubkey;
-
-    fseek(tmp, 0, SEEK_SET);
-    char buf[1024];
-    size_t len = 0;
-    while ((len = fread(buf, 1, sizeof(buf), tmp)) > 0) {
-        pubkey.append(buf, len);
-    }
-
-    std::cout << pubkey << std::endl;
-
+    CryptoPP::AutoSeededRandomPool rng;
+    CryptoPP::RSA::PrivateKey rsa_pk;
+    rsa_pk.GenerateRandomWithKeySize(rng, 4096);
+    CryptoPP::RSA::PublicKey rsa_pb(rsa_pk);
+    std::stringstream smod, sexp;
+    smod << rsa_pk.GetModulus();
+    sexp << rsa_pk.GetPublicExponent();
     std::map<std::string, std::string> data = {
-        {"pubkey", pubkey}
+        {"pub_mod", smod.str()},
+        {"pub_exp", sexp.str()}
     };
     nlohmann::json req = data;
     auto result = client.call("key", req.dump()).as<std::string>();
     std::cout << "result: " << result << std::endl;
 
-    unsigned char key[32];
-    auto lenk = std::make_unique<size_t>(sizeof(key));
-    auto ctx = EVP_PKEY_CTX_new(pkey, NULL);
-    unsigned char input[4096];
-    for (int i = 0; i < result.length(); i++) {
-        input[i] = result[i];
-    }
-    EVP_PKEY_decrypt(ctx, key, lenk.get(), input, result.length());
+    CryptoPP::RSAES_OAEP_SHA_Decryptor d(rsa_pk);
+    std::string recovered;
+    CryptoPP::StringSource ss2(result, true,new CryptoPP::PK_DecryptorFilter(rng, d,new CryptoPP::StringSink(recovered)));
 
-    std::cout << "key: " << key << std::endl;
-
+    std::cout << "recovered: " << recovered << std::endl;
     return 0;
 }
