@@ -12,7 +12,13 @@ add_executable(Client "")
 set_target_properties(Client PROPERTIES OUTPUT_NAME "Client")
 set_target_properties(Client PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/build/linux/x86_64/release")
 target_include_directories(Client SYSTEM PRIVATE
-    /home/nydus/.xmake/packages/a/asio/1.30.2/c1047cd667c14a44bea718715a77a7f5/include
+    /home/nydus/.xmake/packages/r/rpclib/v2.3.0/cd9a29cac23a478da714214c55a59c0c/include
+    /home/nydus/.xmake/packages/n/nlohmann_json/v3.11.3/ec1183311a224b34b5c138edda96fdde/include
+    /home/nydus/.xmake/packages/i/imgui/v1.90.8/2f20ce333d2141edbe6a67692a07023c/include
+    /home/nydus/.xmake/packages/i/imgui/v1.90.8/2f20ce333d2141edbe6a67692a07023c/include/imgui
+    /home/nydus/.xmake/packages/i/imgui/v1.90.8/2f20ce333d2141edbe6a67692a07023c/include/backends
+    /home/nydus/.xmake/packages/i/imgui/v1.90.8/2f20ce333d2141edbe6a67692a07023c/include/misc/cpp
+    /home/nydus/.xmake/packages/o/openssl3/3.0.7/8aaa08615b8740ada8faf167c0cbf065/include
 )
 target_compile_options(Client PRIVATE
     $<$<COMPILE_LANGUAGE:C>:-m64>
@@ -35,6 +41,19 @@ if(MSVC)
     set_property(TARGET Client PROPERTY
         MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif()
+target_link_libraries(Client PRIVATE
+    rpc
+    imgui
+    ssl
+    crypto
+    pthread
+    dl
+)
+target_link_directories(Client PRIVATE
+    /home/nydus/.xmake/packages/r/rpclib/v2.3.0/cd9a29cac23a478da714214c55a59c0c/lib
+    /home/nydus/.xmake/packages/i/imgui/v1.90.8/2f20ce333d2141edbe6a67692a07023c/lib
+    /home/nydus/.xmake/packages/o/openssl3/3.0.7/8aaa08615b8740ada8faf167c0cbf065/lib64
+)
 target_link_options(Client PRIVATE
     -m64
 )
@@ -47,8 +66,13 @@ add_executable(Server "")
 set_target_properties(Server PROPERTIES OUTPUT_NAME "Server")
 set_target_properties(Server PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/build/linux/x86_64/release")
 target_include_directories(Server SYSTEM PRIVATE
-    /home/nydus/.xmake/packages/a/asio/1.30.2/c1047cd667c14a44bea718715a77a7f5/include
+    /home/nydus/.xmake/packages/r/rpclib/v2.3.0/cd9a29cac23a478da714214c55a59c0c/include
     /home/nydus/.xmake/packages/n/nlohmann_json/v3.11.3/ec1183311a224b34b5c138edda96fdde/include
+    /home/nydus/.xmake/packages/i/imgui/v1.90.8/2f20ce333d2141edbe6a67692a07023c/include
+    /home/nydus/.xmake/packages/i/imgui/v1.90.8/2f20ce333d2141edbe6a67692a07023c/include/imgui
+    /home/nydus/.xmake/packages/i/imgui/v1.90.8/2f20ce333d2141edbe6a67692a07023c/include/backends
+    /home/nydus/.xmake/packages/i/imgui/v1.90.8/2f20ce333d2141edbe6a67692a07023c/include/misc/cpp
+    /home/nydus/.xmake/packages/o/openssl3/3.0.7/8aaa08615b8740ada8faf167c0cbf065/include
 )
 target_compile_options(Server PRIVATE
     $<$<COMPILE_LANGUAGE:C>:-m64>
@@ -71,6 +95,19 @@ if(MSVC)
     set_property(TARGET Server PROPERTY
         MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif()
+target_link_libraries(Server PRIVATE
+    rpc
+    imgui
+    ssl
+    crypto
+    pthread
+    dl
+)
+target_link_directories(Server PRIVATE
+    /home/nydus/.xmake/packages/r/rpclib/v2.3.0/cd9a29cac23a478da714214c55a59c0c/lib
+    /home/nydus/.xmake/packages/i/imgui/v1.90.8/2f20ce333d2141edbe6a67692a07023c/lib
+    /home/nydus/.xmake/packages/o/openssl3/3.0.7/8aaa08615b8740ada8faf167c0cbf065/lib64
+)
 target_link_options(Server PRIVATE
     -m64
 )

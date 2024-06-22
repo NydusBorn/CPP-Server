@@ -1,89 +1,65 @@
 #include <iostream>
-#include <asio.hpp>
-#include <thread>
 #include <nlohmann/json.hpp>
-#include <queue>
+#include <openssl/rand.h>
+#include <openssl/aes.h>
+#include <openssl/evp.h>
+#include <openssl/rsa.h>
+#include <openssl/pem.h>
+#include <rpc/server.h>
 
-struct Data {
-    asio::ip::tcp::socket& socket;
-    std::string message;
-};
+unsigned char AES_key[32];
 
-std::mutex queue_lock;
-std::queue<Data> msg_queue;
-std::vector<std::shared_ptr<asio::ip::tcp::socket>> sockets;
+std::string request_key(const std::string& req_json){
+    std::cout << "was called" << std::endl;
+    std::cout << req_json << std::endl;
+    nlohmann::json req = nlohmann::json::parse(req_json);
+    std::string pubkey = req["pubkey"];
+    std::cout << "pubkey: " << pubkey << std::endl;
 
-void WorkerThread(){
-    while(true){
-        Data* data = nullptr;
+    // Convert the public key string to RSA key
+    BIO* bio = BIO_new_mem_buf(pubkey.c_str(), pubkey.length());
+    RSA* rsa = PEM_read_bio_RSA_PUBKEY(bio, NULL, NULL, NULL);
+    BIO_free(bio);
 
-        {
-            std::scoped_lock lock(queue_lock);
-            if (!msg_queue.empty()){
-                data = &msg_queue.front();
-                msg_queue.pop();
-            }
-        }
-
-        if(data != nullptr) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-            data->socket.send(asio::buffer("resolved\n"));
-        }
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    // Encrypt the AES key using the RSA public key
+    int encrypted_key_len = RSA_size(rsa);
+    unsigned char encrypted_key[encrypted_key_len];
+    unsigned char teststr[] = "AES_key";
+    int result = RSA_public_encrypt(sizeof(teststr), teststr, encrypted_key, rsa, RSA_PKCS1_OAEP_PADDING);
+    if (result == -1) {
+        // Handle encryption error
+        return "fail";
     }
+
+    // Convert the encrypted key to a string
+    std::string encrypted_key_str(reinterpret_cast<char*>(encrypted_key), encrypted_key_len);
+
+    // Clean up
+    RSA_free(rsa);
+
+    // Return the encrypted key
+    std::cout << "encrypted key: " << encrypted_key_str << std::endl;
+    return encrypted_key_str;
 }
 
-void DispatcherThread() {
-    while (true) {
-        for (auto& socket : sockets) {
-            if (socket->available() > 0){
-                std::vector<char> msg(512);
-                socket->read_some(asio::buffer(msg));
-                std::cout << "Received message: " << msg.data();
-                {
-                    std::scoped_lock lock(queue_lock);
-                    Data data = { *socket, msg.data() };
-                    msg_queue.emplace(data);
-                }
-            }
-        }
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    }
+std::string make_request(const std::string& req_json){
+
 }
+
+
 
 int main(int argc, char** argv) {
-    asio::io_service service;
-    using namespace asio::ip;
-    tcp::endpoint endpoint(tcp::v4(), 4000);
-    tcp::acceptor acceptor(service, endpoint);
+    //TODO: cmd (imgui) args: port to run on
+    rpc::server server(4000);
 
-    for (int i = 0; i < 8; i++) {
-        std::thread t(WorkerThread);
-        t.detach();
-    }
-    {
-        std::thread t(DispatcherThread);
-        t.detach();
-    }
+    //TODO: enryption
+    //TODO: generate AES key at start, change every hour
+    RAND_bytes(AES_key, sizeof(AES_key));
 
-    std::cout << "[Server] Started" << std::endl;
-    while (true) {
-        auto socket =std::make_shared<tcp::socket>(service);
-        std::cout << "[Server] Waiting for connection" << std::endl;
+    server.bind("key", &request_key);
+    server.bind("request", &make_request);
 
-        acceptor.accept(*socket);
-        std::cout << "[Server] Accepted a connection from client" << std::endl;
 
-        std::map<std::string, std::string> data = {
-                {"message", "Hello from the server"}
-        };
-
-        nlohmann::json j = data;
-        std::string msg = j.dump();
-        socket->send(asio::buffer(msg));
-
-        sockets.emplace_back(std::move(socket));
-    }
-
+    server.run();
     return 0;
 }
