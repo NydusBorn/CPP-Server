@@ -14,10 +14,6 @@ set_target_properties(Client PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE
 target_include_directories(Client SYSTEM PRIVATE
     /home/nydus/.xmake/packages/r/rpclib/v2.3.0/cd9a29cac23a478da714214c55a59c0c/include
     /home/nydus/.xmake/packages/n/nlohmann_json/v3.11.3/ec1183311a224b34b5c138edda96fdde/include
-    /home/nydus/.xmake/packages/i/imgui/v1.90.8/2f20ce333d2141edbe6a67692a07023c/include
-    /home/nydus/.xmake/packages/i/imgui/v1.90.8/2f20ce333d2141edbe6a67692a07023c/include/imgui
-    /home/nydus/.xmake/packages/i/imgui/v1.90.8/2f20ce333d2141edbe6a67692a07023c/include/backends
-    /home/nydus/.xmake/packages/i/imgui/v1.90.8/2f20ce333d2141edbe6a67692a07023c/include/misc/cpp
     /home/nydus/.xmake/packages/c/cryptopp/8.9.0/9c19a519fd66433683eed4f0bbb0df1a/include
 )
 target_compile_options(Client PRIVATE
@@ -43,12 +39,10 @@ if(MSVC)
 endif()
 target_link_libraries(Client PRIVATE
     rpc
-    imgui
     cryptopp
 )
 target_link_directories(Client PRIVATE
     /home/nydus/.xmake/packages/r/rpclib/v2.3.0/cd9a29cac23a478da714214c55a59c0c/lib
-    /home/nydus/.xmake/packages/i/imgui/v1.90.8/2f20ce333d2141edbe6a67692a07023c/lib
     /home/nydus/.xmake/packages/c/cryptopp/8.9.0/9c19a519fd66433683eed4f0bbb0df1a/lib
 )
 target_link_options(Client PRIVATE
@@ -70,6 +64,12 @@ target_include_directories(Server SYSTEM PRIVATE
     /home/nydus/.xmake/packages/i/imgui/v1.90.8/2f20ce333d2141edbe6a67692a07023c/include/backends
     /home/nydus/.xmake/packages/i/imgui/v1.90.8/2f20ce333d2141edbe6a67692a07023c/include/misc/cpp
     /home/nydus/.xmake/packages/c/cryptopp/8.9.0/9c19a519fd66433683eed4f0bbb0df1a/include
+    /home/nydus/.xmake/packages/g/glfw/3.4/4c3c72af70fd4599a3038fc662af9c28/include
+    /home/nydus/.xmake/packages/l/libxinerama/1.1.5/e539e5b3575342a89c7a931295fe40c5/include
+    /home/nydus/.xmake/packages/l/libxcursor/1.2.1/0732a9883e0c44a2a5e1529e9d2dbe14/include
+)
+target_compile_definitions(Server PRIVATE
+    GLFW_INCLUDE_NONE
 )
 target_compile_options(Server PRIVATE
     $<$<COMPILE_LANGUAGE:C>:-m64>
@@ -96,11 +96,28 @@ target_link_libraries(Server PRIVATE
     rpc
     imgui
     cryptopp
+    glfw3
+    OpenGL
+    Xrandr
+    Xinerama
+    Xcursor
+    Xrender
+    X11
+    Xi
+    Xfixes
+    Xext
+    xcb
+    Xau
+    dl
+    pthread
 )
 target_link_directories(Server PRIVATE
     /home/nydus/.xmake/packages/r/rpclib/v2.3.0/cd9a29cac23a478da714214c55a59c0c/lib
     /home/nydus/.xmake/packages/i/imgui/v1.90.8/2f20ce333d2141edbe6a67692a07023c/lib
     /home/nydus/.xmake/packages/c/cryptopp/8.9.0/9c19a519fd66433683eed4f0bbb0df1a/lib
+    /home/nydus/.xmake/packages/g/glfw/3.4/4c3c72af70fd4599a3038fc662af9c28/lib
+    /home/nydus/.xmake/packages/l/libxinerama/1.1.5/e539e5b3575342a89c7a931295fe40c5/lib
+    /home/nydus/.xmake/packages/l/libxcursor/1.2.1/0732a9883e0c44a2a5e1529e9d2dbe14/lib
 )
 target_link_options(Server PRIVATE
     -m64

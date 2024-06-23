@@ -6,46 +6,68 @@ ifneq ($(VERBOSE),1)
 VV=@
 endif
 
-AS=/usr/bin/gcc
-MM=/usr/bin/gcc
-CU=/usr/bin/clang
-CC=/usr/bin/gcc
-CXX=/usr/bin/gcc
 MXX=/usr/bin/gcc
+CU=/usr/bin/clang
+CXX=/usr/bin/gcc
+MM=/usr/bin/gcc
+CC=/usr/bin/gcc
+AS=/usr/bin/gcc
 
+AR=/usr/bin/ar
 LD=/usr/bin/g++
 SH=/usr/bin/g++
-AR=/usr/bin/ar
 
-Granit_LD=/usr/bin/g++
-Granit_CXX=/usr/bin/gcc
-Granit_CXX=/usr/bin/gcc
+Client_LD=/usr/bin/g++
+Client_CXX=/usr/bin/gcc
+Client_CXX=/usr/bin/gcc
+Server_LD=/usr/bin/g++
+Server_CXX=/usr/bin/gcc
+Server_CXX=/usr/bin/gcc
 
-Granit_CXXFLAGS=-m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -isystem /home/nydus/.xmake/packages/a/asio/1.30.2/c1047cd667c14a44bea718715a77a7f5/include -DNDEBUG
-Granit_CXXFLAGS=-m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -isystem /home/nydus/.xmake/packages/a/asio/1.30.2/c1047cd667c14a44bea718715a77a7f5/include -DNDEBUG
-Granit_LDFLAGS=-m64 -s
+Client_CXXFLAGS=-m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++23 -isystem /home/nydus/.xmake/packages/r/rpclib/v2.3.0/cd9a29cac23a478da714214c55a59c0c/include -isystem /home/nydus/.xmake/packages/n/nlohmann_json/v3.11.3/ec1183311a224b34b5c138edda96fdde/include -isystem /home/nydus/.xmake/packages/i/imgui/v1.90.8/2f20ce333d2141edbe6a67692a07023c/include -isystem /home/nydus/.xmake/packages/i/imgui/v1.90.8/2f20ce333d2141edbe6a67692a07023c/include/imgui -isystem /home/nydus/.xmake/packages/i/imgui/v1.90.8/2f20ce333d2141edbe6a67692a07023c/include/backends -isystem /home/nydus/.xmake/packages/i/imgui/v1.90.8/2f20ce333d2141edbe6a67692a07023c/include/misc/cpp -isystem /home/nydus/.xmake/packages/c/cryptopp/8.9.0/9c19a519fd66433683eed4f0bbb0df1a/include -DNDEBUG
+Client_CXXFLAGS=-m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++23 -isystem /home/nydus/.xmake/packages/r/rpclib/v2.3.0/cd9a29cac23a478da714214c55a59c0c/include -isystem /home/nydus/.xmake/packages/n/nlohmann_json/v3.11.3/ec1183311a224b34b5c138edda96fdde/include -isystem /home/nydus/.xmake/packages/i/imgui/v1.90.8/2f20ce333d2141edbe6a67692a07023c/include -isystem /home/nydus/.xmake/packages/i/imgui/v1.90.8/2f20ce333d2141edbe6a67692a07023c/include/imgui -isystem /home/nydus/.xmake/packages/i/imgui/v1.90.8/2f20ce333d2141edbe6a67692a07023c/include/backends -isystem /home/nydus/.xmake/packages/i/imgui/v1.90.8/2f20ce333d2141edbe6a67692a07023c/include/misc/cpp -isystem /home/nydus/.xmake/packages/c/cryptopp/8.9.0/9c19a519fd66433683eed4f0bbb0df1a/include -DNDEBUG
+Client_LDFLAGS=-m64 -L/home/nydus/.xmake/packages/r/rpclib/v2.3.0/cd9a29cac23a478da714214c55a59c0c/lib -L/home/nydus/.xmake/packages/i/imgui/v1.90.8/2f20ce333d2141edbe6a67692a07023c/lib -L/home/nydus/.xmake/packages/c/cryptopp/8.9.0/9c19a519fd66433683eed4f0bbb0df1a/lib -s -lrpc -limgui -lcryptopp
+Server_CXXFLAGS=-m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++23 -DGLFW_INCLUDE_NONE -isystem /home/nydus/.xmake/packages/r/rpclib/v2.3.0/cd9a29cac23a478da714214c55a59c0c/include -isystem /home/nydus/.xmake/packages/n/nlohmann_json/v3.11.3/ec1183311a224b34b5c138edda96fdde/include -isystem /home/nydus/.xmake/packages/i/imgui/v1.90.8/2f20ce333d2141edbe6a67692a07023c/include -isystem /home/nydus/.xmake/packages/i/imgui/v1.90.8/2f20ce333d2141edbe6a67692a07023c/include/imgui -isystem /home/nydus/.xmake/packages/i/imgui/v1.90.8/2f20ce333d2141edbe6a67692a07023c/include/backends -isystem /home/nydus/.xmake/packages/i/imgui/v1.90.8/2f20ce333d2141edbe6a67692a07023c/include/misc/cpp -isystem /home/nydus/.xmake/packages/c/cryptopp/8.9.0/9c19a519fd66433683eed4f0bbb0df1a/include -isystem /home/nydus/.xmake/packages/g/glfw/3.4/4c3c72af70fd4599a3038fc662af9c28/include -isystem /home/nydus/.xmake/packages/l/libxinerama/1.1.5/e539e5b3575342a89c7a931295fe40c5/include -isystem /home/nydus/.xmake/packages/l/libxcursor/1.2.1/0732a9883e0c44a2a5e1529e9d2dbe14/include -DNDEBUG
+Server_CXXFLAGS=-m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++23 -DGLFW_INCLUDE_NONE -isystem /home/nydus/.xmake/packages/r/rpclib/v2.3.0/cd9a29cac23a478da714214c55a59c0c/include -isystem /home/nydus/.xmake/packages/n/nlohmann_json/v3.11.3/ec1183311a224b34b5c138edda96fdde/include -isystem /home/nydus/.xmake/packages/i/imgui/v1.90.8/2f20ce333d2141edbe6a67692a07023c/include -isystem /home/nydus/.xmake/packages/i/imgui/v1.90.8/2f20ce333d2141edbe6a67692a07023c/include/imgui -isystem /home/nydus/.xmake/packages/i/imgui/v1.90.8/2f20ce333d2141edbe6a67692a07023c/include/backends -isystem /home/nydus/.xmake/packages/i/imgui/v1.90.8/2f20ce333d2141edbe6a67692a07023c/include/misc/cpp -isystem /home/nydus/.xmake/packages/c/cryptopp/8.9.0/9c19a519fd66433683eed4f0bbb0df1a/include -isystem /home/nydus/.xmake/packages/g/glfw/3.4/4c3c72af70fd4599a3038fc662af9c28/include -isystem /home/nydus/.xmake/packages/l/libxinerama/1.1.5/e539e5b3575342a89c7a931295fe40c5/include -isystem /home/nydus/.xmake/packages/l/libxcursor/1.2.1/0732a9883e0c44a2a5e1529e9d2dbe14/include -DNDEBUG
+Server_LDFLAGS=-m64 -L/home/nydus/.xmake/packages/r/rpclib/v2.3.0/cd9a29cac23a478da714214c55a59c0c/lib -L/home/nydus/.xmake/packages/i/imgui/v1.90.8/2f20ce333d2141edbe6a67692a07023c/lib -L/home/nydus/.xmake/packages/c/cryptopp/8.9.0/9c19a519fd66433683eed4f0bbb0df1a/lib -L/home/nydus/.xmake/packages/g/glfw/3.4/4c3c72af70fd4599a3038fc662af9c28/lib -L/home/nydus/.xmake/packages/l/libxinerama/1.1.5/e539e5b3575342a89c7a931295fe40c5/lib -L/home/nydus/.xmake/packages/l/libxcursor/1.2.1/0732a9883e0c44a2a5e1529e9d2dbe14/lib -s -lrpc -limgui -lcryptopp -lglfw3 -lOpenGL -lXrandr -lXinerama -lXcursor -lXrender -lX11 -lXi -lXfixes -lXext -lxcb -lXau -ldl -lpthread
 
-default:  Granit
+default:  Client Server
 
-all:  Granit
+all:  Client Server
 
-.PHONY: default all  Granit
+.PHONY: default all  Client Server
 
-Granit: build/linux/x86_64/release/Granit
-build/linux/x86_64/release/Granit: build/.objs/Granit/linux/x86_64/release/src/main.cpp.o
-	@echo linking.release Granit
+Client: build/linux/x86_64/release/Client
+build/linux/x86_64/release/Client: build/.objs/Client/linux/x86_64/release/client/client.cpp.o
+	@echo linking.release Client
 	@mkdir -p build/linux/x86_64/release
-	$(VV)$(Granit_LD) -o build/linux/x86_64/release/Granit build/.objs/Granit/linux/x86_64/release/src/main.cpp.o $(Granit_LDFLAGS)
+	$(VV)$(Client_LD) -o build/linux/x86_64/release/Client build/.objs/Client/linux/x86_64/release/client/client.cpp.o $(Client_LDFLAGS)
 
-build/.objs/Granit/linux/x86_64/release/src/main.cpp.o: server
-	@echo compiling.release src/main.cpp
-	@mkdir -p build/.objs/Granit/linux/x86_64/release/src
-	$(VV)$(Granit_CXX) -c $(Granit_CXXFLAGS) -o build/.objs/Granit/linux/x86_64/release/src/main.cpp.o src/main.cpp
+build/.objs/Client/linux/x86_64/release/client/client.cpp.o: client/client.cpp
+	@echo compiling.release client/client.cpp
+	@mkdir -p build/.objs/Client/linux/x86_64/release/client
+	$(VV)$(Client_CXX) -c $(Client_CXXFLAGS) -o build/.objs/Client/linux/x86_64/release/client/client.cpp.o client/client.cpp
 
-clean:  clean_Granit
+Server: build/linux/x86_64/release/Server
+build/linux/x86_64/release/Server: build/.objs/Server/linux/x86_64/release/server/main.cpp.o
+	@echo linking.release Server
+	@mkdir -p build/linux/x86_64/release
+	$(VV)$(Server_LD) -o build/linux/x86_64/release/Server build/.objs/Server/linux/x86_64/release/server/main.cpp.o $(Server_LDFLAGS)
 
-clean_Granit: 
-	@rm -rf build/linux/x86_64/release/Granit
-	@rm -rf build/linux/x86_64/release/Granit.sym
-	@rm -rf build/.objs/Granit/linux/x86_64/release/src/main.cpp.o
+build/.objs/Server/linux/x86_64/release/server/main.cpp.o: server/main.cpp
+	@echo compiling.release server/main.cpp
+	@mkdir -p build/.objs/Server/linux/x86_64/release/server
+	$(VV)$(Server_CXX) -c $(Server_CXXFLAGS) -o build/.objs/Server/linux/x86_64/release/server/main.cpp.o server/main.cpp
+
+clean:  clean_Client clean_Server
+
+clean_Client: 
+	@rm -rf build/linux/x86_64/release/Client
+	@rm -rf build/linux/x86_64/release/Client.sym
+	@rm -rf build/.objs/Client/linux/x86_64/release/client/client.cpp.o
+
+clean_Server: 
+	@rm -rf build/linux/x86_64/release/Server
+	@rm -rf build/linux/x86_64/release/Server.sym
+	@rm -rf build/.objs/Server/linux/x86_64/release/server/main.cpp.o
 
