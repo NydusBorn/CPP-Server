@@ -1,4 +1,4 @@
-#include "RSAEncryptor.h"
+#include "RSAEncryptor.hpp"
 
 void RSAEncryptor::generateKeyPair(int key_length) {
     this->key_length = key_length;
@@ -70,7 +70,7 @@ std::string RSAEncryptor::encrypt(const std::string& plaintext) {
     return std::string(reinterpret_cast<char*>(encrypted_data.data()), encrypted_length);
 }
 
-std::string RSAEncryptor::decrypt(const std::string& encrypted_text) {
+std::string RSAEncryptor::decrypt(const std::string& encrypted_text) const {
     std::vector<unsigned char> decrypted_data(RSA_size(rsa_keypair));
     int decrypted_length = RSA_private_decrypt(
         encrypted_text.length(),

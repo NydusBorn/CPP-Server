@@ -14,7 +14,8 @@ set_target_properties(Client PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE
 target_include_directories(Client SYSTEM PRIVATE
     /home/nydus/.xmake/packages/r/rpclib/v2.3.0/cd9a29cac23a478da714214c55a59c0c/include
     /home/nydus/.xmake/packages/n/nlohmann_json/v3.11.3/ec1183311a224b34b5c138edda96fdde/include
-    /home/nydus/.xmake/packages/c/cryptopp/8.9.0/9c19a519fd66433683eed4f0bbb0df1a/include
+    /home/nydus/.xmake/packages/o/openssl3/3.0.7/8aaa08615b8740ada8faf167c0cbf065/include
+    /home/nydus/.xmake/packages/c/cppcodec/2022.09.07/9f24b4871c2d41628ffa998488a7da8d/include
 )
 target_compile_options(Client PRIVATE
     $<$<COMPILE_LANGUAGE:C>:-m64>
@@ -39,11 +40,14 @@ if(MSVC)
 endif()
 target_link_libraries(Client PRIVATE
     rpc
-    cryptopp
+    ssl
+    crypto
+    pthread
+    dl
 )
 target_link_directories(Client PRIVATE
     /home/nydus/.xmake/packages/r/rpclib/v2.3.0/cd9a29cac23a478da714214c55a59c0c/lib
-    /home/nydus/.xmake/packages/c/cryptopp/8.9.0/9c19a519fd66433683eed4f0bbb0df1a/lib
+    /home/nydus/.xmake/packages/o/openssl3/3.0.7/8aaa08615b8740ada8faf167c0cbf065/lib64
 )
 target_link_options(Client PRIVATE
     -m64
@@ -53,13 +57,64 @@ target_sources(Client PRIVATE
 )
 
 # target
+add_library(Encryptor STATIC "")
+set_target_properties(Encryptor PROPERTIES OUTPUT_NAME "Encryptor")
+set_target_properties(Encryptor PROPERTIES ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/build/linux/x86_64/release")
+target_include_directories(Encryptor SYSTEM PRIVATE
+    /home/nydus/.xmake/packages/o/openssl3/3.0.7/8aaa08615b8740ada8faf167c0cbf065/include
+    /home/nydus/.xmake/packages/r/rpclib/v2.3.0/cd9a29cac23a478da714214c55a59c0c/include
+    /home/nydus/.xmake/packages/n/nlohmann_json/v3.11.3/ec1183311a224b34b5c138edda96fdde/include
+    /home/nydus/.xmake/packages/c/cppcodec/2022.09.07/9f24b4871c2d41628ffa998488a7da8d/include
+)
+target_compile_options(Encryptor PRIVATE
+    $<$<COMPILE_LANGUAGE:C>:-m64>
+    $<$<COMPILE_LANGUAGE:CXX>:-m64>
+    $<$<COMPILE_LANGUAGE:C>:-DNDEBUG>
+    $<$<COMPILE_LANGUAGE:CXX>:-DNDEBUG>
+)
+set_target_properties(Encryptor PROPERTIES CXX_EXTENSIONS OFF)
+target_compile_features(Encryptor PRIVATE cxx_std_23)
+if(MSVC)
+    target_compile_options(Encryptor PRIVATE $<$<CONFIG:Release>:-Ox -fp:fast>)
+else()
+    target_compile_options(Encryptor PRIVATE -O3)
+endif()
+if(MSVC)
+else()
+    target_compile_options(Encryptor PRIVATE -fvisibility=hidden)
+endif()
+if(MSVC)
+    set_property(TARGET Encryptor PROPERTY
+        MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif()
+target_link_libraries(Encryptor PRIVATE
+    ssl
+    crypto
+    rpc
+    pthread
+    dl
+)
+target_link_directories(Encryptor PRIVATE
+    /home/nydus/.xmake/packages/o/openssl3/3.0.7/8aaa08615b8740ada8faf167c0cbf065/lib64
+    /home/nydus/.xmake/packages/r/rpclib/v2.3.0/cd9a29cac23a478da714214c55a59c0c/lib
+)
+target_link_options(Encryptor PRIVATE
+    -m64
+)
+target_sources(Encryptor PRIVATE
+    lib/AESEncryptor.cpp
+    lib/RSAEncryptor.cpp
+    lib/Connector.cpp
+)
+
+# target
 add_executable(Server "")
 set_target_properties(Server PROPERTIES OUTPUT_NAME "Server")
 set_target_properties(Server PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/build/linux/x86_64/release")
 target_include_directories(Server SYSTEM PRIVATE
     /home/nydus/.xmake/packages/r/rpclib/v2.3.0/cd9a29cac23a478da714214c55a59c0c/include
     /home/nydus/.xmake/packages/n/nlohmann_json/v3.11.3/ec1183311a224b34b5c138edda96fdde/include
-    /home/nydus/.xmake/packages/c/cryptopp/8.9.0/9c19a519fd66433683eed4f0bbb0df1a/include
+    /home/nydus/.xmake/packages/o/openssl3/3.0.7/8aaa08615b8740ada8faf167c0cbf065/include
     /home/nydus/.xmake/packages/i/imgui/v1.90.8/1e3bedcc00134776943939c8a54e344b/include
     /home/nydus/.xmake/packages/i/imgui/v1.90.8/1e3bedcc00134776943939c8a54e344b/include/imgui
     /home/nydus/.xmake/packages/i/imgui/v1.90.8/1e3bedcc00134776943939c8a54e344b/include/backends
@@ -67,6 +122,7 @@ target_include_directories(Server SYSTEM PRIVATE
     /home/nydus/.xmake/packages/g/glfw/3.4/4c3c72af70fd4599a3038fc662af9c28/include
     /home/nydus/.xmake/packages/l/libxinerama/1.1.5/e539e5b3575342a89c7a931295fe40c5/include
     /home/nydus/.xmake/packages/l/libxcursor/1.2.1/0732a9883e0c44a2a5e1529e9d2dbe14/include
+    /home/nydus/.xmake/packages/c/cppcodec/2022.09.07/9f24b4871c2d41628ffa998488a7da8d/include
 )
 target_compile_definitions(Server PRIVATE
     GLFW_INCLUDE_NONE
@@ -94,7 +150,8 @@ if(MSVC)
 endif()
 target_link_libraries(Server PRIVATE
     rpc
-    cryptopp
+    ssl
+    crypto
     imgui
     glfw3
     OpenGL
@@ -108,12 +165,12 @@ target_link_libraries(Server PRIVATE
     Xext
     xcb
     Xau
-    dl
     pthread
+    dl
 )
 target_link_directories(Server PRIVATE
     /home/nydus/.xmake/packages/r/rpclib/v2.3.0/cd9a29cac23a478da714214c55a59c0c/lib
-    /home/nydus/.xmake/packages/c/cryptopp/8.9.0/9c19a519fd66433683eed4f0bbb0df1a/lib
+    /home/nydus/.xmake/packages/o/openssl3/3.0.7/8aaa08615b8740ada8faf167c0cbf065/lib64
     /home/nydus/.xmake/packages/i/imgui/v1.90.8/1e3bedcc00134776943939c8a54e344b/lib
     /home/nydus/.xmake/packages/g/glfw/3.4/4c3c72af70fd4599a3038fc662af9c28/lib
     /home/nydus/.xmake/packages/l/libxinerama/1.1.5/e539e5b3575342a89c7a931295fe40c5/lib

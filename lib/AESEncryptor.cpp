@@ -1,4 +1,4 @@
-#include "AESEncryptor.h"
+#include "AESEncryptor.hpp"
 #include <cstring>
 
 void AESEncryptor::resetIV() {

@@ -23,7 +23,7 @@ public:
     std::string getPublicKey();
     std::string getPrivateKey();
     std::string encrypt(const std::string& plaintext);
-    std::string decrypt(const std::string& encrypted_text);
+    std::string decrypt(const std::string& encrypted_text) const;
     void loadKeyFromPEM(const std::string& key_pem, bool is_public);
 };
 
