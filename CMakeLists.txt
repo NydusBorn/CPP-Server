@@ -15,7 +15,7 @@ target_include_directories(Client SYSTEM PRIVATE
     /home/nydus/.xmake/packages/r/rpclib/v2.3.0/cd9a29cac23a478da714214c55a59c0c/include
     /home/nydus/.xmake/packages/n/nlohmann_json/v3.11.3/ec1183311a224b34b5c138edda96fdde/include
     /home/nydus/.xmake/packages/o/openssl3/3.0.7/8aaa08615b8740ada8faf167c0cbf065/include
-    /home/nydus/.xmake/packages/c/cppcodec/2022.09.07/9f24b4871c2d41628ffa998488a7da8d/include
+    /home/nydus/.xmake/packages/c/cpp-httplib/0.15.3/10d0838bab72482e8b727994616a9af6/include
 )
 target_compile_options(Client PRIVATE
     $<$<COMPILE_LANGUAGE:C>:-m64>
@@ -64,7 +64,7 @@ target_include_directories(Encryptor SYSTEM PRIVATE
     /home/nydus/.xmake/packages/o/openssl3/3.0.7/8aaa08615b8740ada8faf167c0cbf065/include
     /home/nydus/.xmake/packages/r/rpclib/v2.3.0/cd9a29cac23a478da714214c55a59c0c/include
     /home/nydus/.xmake/packages/n/nlohmann_json/v3.11.3/ec1183311a224b34b5c138edda96fdde/include
-    /home/nydus/.xmake/packages/c/cppcodec/2022.09.07/9f24b4871c2d41628ffa998488a7da8d/include
+    /home/nydus/.xmake/packages/c/cpp-httplib/0.15.3/10d0838bab72482e8b727994616a9af6/include
 )
 target_compile_options(Encryptor PRIVATE
     $<$<COMPILE_LANGUAGE:C>:-m64>
@@ -122,7 +122,12 @@ target_include_directories(Server SYSTEM PRIVATE
     /home/nydus/.xmake/packages/g/glfw/3.4/4c3c72af70fd4599a3038fc662af9c28/include
     /home/nydus/.xmake/packages/l/libxinerama/1.1.5/e539e5b3575342a89c7a931295fe40c5/include
     /home/nydus/.xmake/packages/l/libxcursor/1.2.1/0732a9883e0c44a2a5e1529e9d2dbe14/include
-    /home/nydus/.xmake/packages/c/cppcodec/2022.09.07/9f24b4871c2d41628ffa998488a7da8d/include
+    /home/nydus/.xmake/packages/c/cpp-httplib/0.15.3/10d0838bab72482e8b727994616a9af6/include
+    /home/nydus/.xmake/packages/i/implot/v0.16/958552fb009040bf90338d7726b3a70d/include
+    /home/nydus/.xmake/packages/i/imgui/v1.90.8/2f20ce333d2141edbe6a67692a07023c/include
+    /home/nydus/.xmake/packages/i/imgui/v1.90.8/2f20ce333d2141edbe6a67692a07023c/include/imgui
+    /home/nydus/.xmake/packages/i/imgui/v1.90.8/2f20ce333d2141edbe6a67692a07023c/include/backends
+    /home/nydus/.xmake/packages/i/imgui/v1.90.8/2f20ce333d2141edbe6a67692a07023c/include/misc/cpp
 )
 target_compile_definitions(Server PRIVATE
     GLFW_INCLUDE_NONE
@@ -165,6 +170,7 @@ target_link_libraries(Server PRIVATE
     Xext
     xcb
     Xau
+    implot
     pthread
     dl
 )
@@ -175,6 +181,8 @@ target_link_directories(Server PRIVATE
     /home/nydus/.xmake/packages/g/glfw/3.4/4c3c72af70fd4599a3038fc662af9c28/lib
     /home/nydus/.xmake/packages/l/libxinerama/1.1.5/e539e5b3575342a89c7a931295fe40c5/lib
     /home/nydus/.xmake/packages/l/libxcursor/1.2.1/0732a9883e0c44a2a5e1529e9d2dbe14/lib
+    /home/nydus/.xmake/packages/i/implot/v0.16/958552fb009040bf90338d7726b3a70d/lib
+    /home/nydus/.xmake/packages/i/imgui/v1.90.8/2f20ce333d2141edbe6a67692a07023c/lib
 )
 target_link_options(Server PRIVATE
     -m64
