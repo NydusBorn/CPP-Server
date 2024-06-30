@@ -8,6 +8,7 @@ set_languages("cxx23")
 -- set_policy("build.sanitizer.undefined", true)
 
 add_requires("rpclib", "nlohmann_json", "openssl3", "cpp-httplib", "implot")
+-- add_requires("qt6widgets", {system = true})
 add_requires("imgui", {configs = {glfw = true, opengl3 = true}})
 
 target("Encryptor")
