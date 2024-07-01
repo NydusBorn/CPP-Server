@@ -1,6 +1,7 @@
 -- add_rules("mode.debug")
 add_rules("mode.release")
 set_languages("cxx23")
+
 -- set_policy("build.sanitizer.address", true)
 -- set_policy("build.sanitizer.thread", true)
 -- set_policy("build.sanitizer.memory", true)
@@ -9,6 +10,7 @@ set_languages("cxx23")
 
 add_requires("rpclib", "nlohmann_json", "openssl3", "cpp-httplib", "implot")
 -- add_requires("qt6widgets", {system = true})
+-- set_toolchain("mingw")
 add_requires("imgui", {configs = {glfw = true, opengl3 = true}})
 
 target("Encryptor")
