@@ -132,11 +132,11 @@ public:
         return this->PublicIP;
     }
 
-    [[nodiscard]] constexpr int getUniqueAddresses() {
+    [[nodiscard]] int getUniqueAddresses() {
         return this->uniqueAddresses.size();
     }
 
-    [[nodiscard]] constexpr int getUniqueIDs() {
+    [[nodiscard]] int getUniqueIDs() {
         return this->uniqueIDs.size();
     }
 
