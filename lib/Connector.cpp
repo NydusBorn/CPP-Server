@@ -132,11 +132,11 @@ public:
         return this->PublicIP;
     }
 
-    [[nodiscard]] constexpr int getUniqueAddresses() const {
+    [[nodiscard]] constexpr int getUniqueAddresses() {
         return this->uniqueAddresses.size();
     }
 
-    [[nodiscard]] constexpr int getUniqueIDs() const {
+    [[nodiscard]] constexpr int getUniqueIDs() {
         return this->uniqueIDs.size();
     }
 
@@ -154,7 +154,7 @@ public:
         return rps;
     }
 
-    [[nodiscard]] constexpr std::string makeRequest(const std::string &req_json) {
+    [[nodiscard]] std::string makeRequest(const std::string &req_json) {
         if (getRole() == Role::Server) {
             throw incorrectRole("Server is not allowed to make requests");
         }
