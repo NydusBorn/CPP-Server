@@ -121,10 +121,16 @@ public:
     }
 
     [[nodiscard]] constexpr std::string getAddress() const {
+        if (getRole() == Role::Server) {
+            throw incorrectRole("Server is not capable of getting it's own address, use getPublicIP() instead");
+        }
         return this->address;
     }
 
     [[nodiscard]] constexpr std::string getUUID() const {
+        if (getRole() == Role::Server) {
+            throw incorrectRole("Server does not have a UUID");
+        }
         return this->UUID;
     }
 
@@ -133,14 +139,23 @@ public:
     }
 
     [[nodiscard]] int getUniqueAddresses() {
+        if (role == Role::Client) {
+            throw incorrectRole("Client is not capable of collecting statistics");
+        }
         return this->uniqueAddresses.size();
     }
 
     [[nodiscard]] int getUniqueIDs() {
+        if (role == Role::Client) {
+            throw incorrectRole("Client is not capable of collecting statistics");
+        }
         return this->uniqueIDs.size();
     }
 
     [[nodiscard]] constexpr double getRequestsPerSecond() {
+        if (role == Role::Client) {
+            throw incorrectRole("Client is not capable of collecting statistics");
+        }
         std::vector<std::chrono::time_point<std::chrono::system_clock>> unexpired;
         double rps = 0;
         for (auto time : expiringTimes) {
