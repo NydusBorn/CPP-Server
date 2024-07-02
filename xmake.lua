@@ -1,6 +1,7 @@
 -- add_rules("mode.debug")
 add_rules("mode.release")
 set_languages("cxx23")
+-- set_runtimes("MD")
 
 -- set_policy("build.sanitizer.address", true)
 -- set_policy("build.sanitizer.thread", true)
