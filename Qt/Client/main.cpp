@@ -13,17 +13,37 @@ class MyForm : public QWidget
 public:
     MyForm(QWidget *parent = nullptr) : QWidget(parent)
     {
+
+        setWindowTitle("Granit-Client");
+
         QVBoxLayout *layoutV = new QVBoxLayout(this);
         QHBoxLayout *layoutH = new QHBoxLayout(this);
 
+        QLabel *LabelError1 = new QLabel(this);
+        LabelError1->setText("Состояние подключения: ");
+        LabelError1->setStyleSheet("QLabel { font-weight: bold; color: salmon; font-size: 130%;}");
+        QLabel *LabelError2 = new QLabel(this);
+        LabelError2->setText("В активно поиске коннекта");
+        QHBoxLayout *errorLayout = new QHBoxLayout;
+        errorLayout->addWidget(LabelError1);
+        errorLayout->addWidget(LabelError2);
+        // QLabel *label1 = new QLabel(this);
+        // label1->setText("Статус: В активном поиске коннекта");
+        // label1->setStyleSheet("QLabel{font-weight bolder;}");
+        layoutV->addLayout(errorLayout);
 
-        QLabel *label1 = new QLabel(this);
-        label1->setText("Статус: В активном поиске коннекта");
-        layoutV->addWidget(label1);
-
-        QLabel *label2 = new QLabel(this);
-        label2->setText("Ошибки: Ошибок не обнаружено");
-        layoutV->addWidget(label2);
+        // QLabel *label2 = new QLabel(this);
+        // label2->setText("Ошибки: Ошибок не обнаружено");
+        // layoutV->addWidget(label2);
+        QLabel *LabelError3 = new QLabel(this);
+        QLabel *LabelError4 = new QLabel(this);
+        LabelError3->setText("Ошибки: ");
+        LabelError4->setText("Ошибок не обнаружено");
+        LabelError3->setStyleSheet("QLabel { font-weight: bold; color: salmon;font-size: 130%;}");
+        QHBoxLayout *errorLayout2 = new QHBoxLayout;
+        errorLayout2->addWidget(LabelError3);
+        errorLayout2->addWidget(LabelError4);
+        layoutV->addLayout(errorLayout2);
 
         QSpacerItem* VSpacer = new QSpacerItem(10,20,QSizePolicy::Minimum);//, QSizePolicy::Expanding); - нужно для пропорционального масштабирования при растягивании окна
         layoutV->addItem(VSpacer);
@@ -31,10 +51,12 @@ public:
         QHBoxLayout *textLayout = new QHBoxLayout;
         QLabel *label3 = new QLabel(this);
         label3->setText("Сообщение на сервер: ");
-        layoutV->addWidget(label3);
+        // layoutV->addWidget(label3);
         QLabel *label4 = new QLabel(this);
         label4->setText("Сообщение от сервера: ");
-        layoutV->addWidget(label4);
+        // layoutV->addWidget(label4);
+        label3->setStyleSheet("QLabel { font-weight: bold; color: salmon;font-size: 130%;}");
+        label4->setStyleSheet("QLabel { font-weight: bold; color: salmon;font-size: 130%;}");
         textLayout->addWidget(label3);
         textLayout->addWidget(label4);
         layoutV->addLayout(textLayout);
@@ -52,15 +74,23 @@ public:
         layoutV->addItem(VSpacerButton);
 
         QHBoxLayout *buttonLayout = new QHBoxLayout;
-        QPushButton *faqButton = new QPushButton("F.A.Q.");
+        faqButton = new QPushButton("F.A.Q.");
+        faqButton->setObjectName("startButton");
         startButton = new QPushButton("Start");
-        startButton->setObjectName("startButton");
-        QPushButton *exitButton = new QPushButton("Exit");
+        startButton->setObjectName("faqButton");
+        exitButton = new QPushButton("Exit");
+        exitButton->setObjectName("exitButton");
         buttonLayout->addWidget(faqButton);
         buttonLayout->addWidget(startButton);
         buttonLayout->addWidget(exitButton);
         layoutV->addLayout(buttonLayout);
         startButton->installEventFilter(this);//фильтр события для кнопки Start
+        faqButton->installEventFilter(this);//фильтр события для кнопки F.A.Q.
+        exitButton->installEventFilter(this);//фильтр события для кнопки Exit
+        startButton->setStyleSheet("QPushButton{background-color: salmon;color:bisque;}");
+        faqButton->setStyleSheet("QPushButton{background-color: salmon;color:bisque;}");
+        exitButton->setStyleSheet("QPushButton{background-color: salmon;color:bisque;}");
+
     }
 
 protected:
@@ -71,20 +101,37 @@ protected:
             textEdit1->setPlainText("Технические характеристики BMW M5 седан F90:\nДвигатель: бензиновый, 8 цилиндров, 4 клапана на цилиндр, 4395 см³, V-образный.\nМаксимальная мощность: 625 л. с.\nМаксимальный крутящий момент: 750 Н∙м.\nКоробка передач: автоматическая, 8 передач.\nПривод: полный.\nМаксимальная скорость: 250 км/ч.\nВремя разгона до 100 км/ч: 3,3 с.\nРасход топлива: смешанный цикл — 10,8 л/100 км, городской цикл — 15,2 л/100 км, загородный цикл — 8,7 л/100 км.\nСтрана производства — Германия.");
             textEdit2->setPlainText("BMW M5 стал на днях самым быстрым серийным седаном SIC.\n«Эмка» проехала круг за 2 минуты 22,828 секунды. Нам это, конечно, ни о чем не говорит, потому что мы не знаем даже, кто был «четырехдверным лидером» до М5. Известно, что абсолютный рекорд этой трассы — 1 минута 31,68 секунды и его установил Льюис Хэмилтон на болиде Ф-1 Mercedes AMG F1 W08 EQ Power+.");
              }
+            else if (obj == faqButton && event->type() == QEvent::MouseButtonPress)
+            {
+                textEdit1->setPlainText(" Германия.");
+                textEdit2->setPlainText("BMW M5");
+
+                // Создание нового пустого окна
+                QWidget *emptyWindow = new QWidget();
+                emptyWindow->resize(300,400);
+                emptyWindow->show();
+            }
+            else if (obj == exitButton && event->type() == QEvent::MouseButtonPress)
+            {
+                this->close();
+             }
             return QWidget::eventFilter(obj, event);
         }
 
 
 private:
     QPushButton *startButton;
+    QPushButton *faqButton;
+    QPushButton *exitButton;
     QTextEdit *textEdit1;
     QTextEdit *textEdit2;
+    QWidget *FaqWindow;
+    QLabel *FaqLabel;
 };
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    a.setStyleSheet("QPushButton#startButton{background-color: salmon;color:bisque;}");
     MyForm form;
     form.show();
     return a.exec();
