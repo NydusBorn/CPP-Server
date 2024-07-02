@@ -4,7 +4,7 @@
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QComboBox>
-#include <C:\Users\Alex\Desktop\CPP-Server-master\lib\Connector.cpp>
+#include "../../lib/Connector.cpp"
 #include <iostream>
 #include <nlohmann/json.hpp>
 
