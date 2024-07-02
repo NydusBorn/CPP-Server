@@ -4,9 +4,15 @@
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QComboBox>
+#include <C:\Users\Alex\Desktop\CPP-Server-master\lib\Connector.cpp>
+#include <iostream>
+#include <nlohmann/json.hpp>
+
 
 int main(int argc, char *argv[])
 {
+    Connector client("127.0.0.1", 4000);
+
     QApplication a(argc, argv);
 
     QWidget w;
@@ -21,9 +27,6 @@ int main(int argc, char *argv[])
 
     QComboBox *comboBox = new QComboBox(&w);
     layout->addWidget(comboBox);
-
-    // Connector *con = new Connector(this);
-    // label->setText(con.getUniqueAddresses);
 
 
     w.show();
