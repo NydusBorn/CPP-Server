@@ -45,10 +45,6 @@ protected:
         return rsaEncryptor->getPublicKey();
     };
 
-    [[nodiscard]] virtual std::string mainreq(const std::string &req_enc) = 0;
-
-
-
 public:
 
     ConnectorBase() = default;
@@ -148,8 +144,6 @@ public:
         expiringTimes = unexpired;
         return rps;
     }
-
-    [[nodiscard]] virtual std::string makeRequest(const std::string &req_json) = 0;
 
     virtual ~ConnectorBase() = default;
 };

@@ -5,7 +5,56 @@
 # project
 cmake_minimum_required(VERSION 3.15.0)
 cmake_policy(SET CMP0091 NEW)
-project(Client LANGUAGES CXX)
+project(BotnetLocal LANGUAGES CXX)
+
+# target
+add_executable(BotnetLocal "")
+set_target_properties(BotnetLocal PROPERTIES OUTPUT_NAME "BotnetLocal")
+set_target_properties(BotnetLocal PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/build/linux/x86_64/release")
+target_include_directories(BotnetLocal SYSTEM PRIVATE
+    /home/nydus/.xmake/packages/r/rpclib/v2.3.0/cd9a29cac23a478da714214c55a59c0c/include
+    /home/nydus/.xmake/packages/n/nlohmann_json/v3.11.3/ec1183311a224b34b5c138edda96fdde/include
+    /home/nydus/.xmake/packages/o/openssl3/3.0.7/8aaa08615b8740ada8faf167c0cbf065/include
+    /home/nydus/.xmake/packages/c/cpp-httplib/0.15.3/10d0838bab72482e8b727994616a9af6/include
+)
+target_compile_options(BotnetLocal PRIVATE
+    $<$<COMPILE_LANGUAGE:C>:-m64>
+    $<$<COMPILE_LANGUAGE:CXX>:-m64>
+    $<$<COMPILE_LANGUAGE:C>:-DNDEBUG>
+    $<$<COMPILE_LANGUAGE:CXX>:-DNDEBUG>
+)
+set_target_properties(BotnetLocal PROPERTIES CXX_EXTENSIONS OFF)
+target_compile_features(BotnetLocal PRIVATE cxx_std_23)
+if(MSVC)
+    target_compile_options(BotnetLocal PRIVATE $<$<CONFIG:Release>:-Ox -fp:fast>)
+else()
+    target_compile_options(BotnetLocal PRIVATE -O3)
+endif()
+if(MSVC)
+else()
+    target_compile_options(BotnetLocal PRIVATE -fvisibility=hidden)
+endif()
+if(MSVC)
+    set_property(TARGET BotnetLocal PROPERTY
+        MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif()
+target_link_libraries(BotnetLocal PRIVATE
+    rpc
+    ssl
+    crypto
+    pthread
+    dl
+)
+target_link_directories(BotnetLocal PRIVATE
+    /home/nydus/.xmake/packages/r/rpclib/v2.3.0/cd9a29cac23a478da714214c55a59c0c/lib
+    /home/nydus/.xmake/packages/o/openssl3/3.0.7/8aaa08615b8740ada8faf167c0cbf065/lib64
+)
+target_link_options(BotnetLocal PRIVATE
+    -m64
+)
+target_sources(BotnetLocal PRIVATE
+    BotnetLocal/main.cpp
+)
 
 # target
 add_executable(Client "")
@@ -107,6 +156,7 @@ target_sources(Encryptor PRIVATE
     lib/BruteForcer.cpp
     lib/ConnectorBase.cpp
     lib/ConnectorSimple.cpp
+    lib/ConnectorBotnet.cpp
 )
 
 # target

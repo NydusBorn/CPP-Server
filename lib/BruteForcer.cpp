@@ -6,6 +6,8 @@
 #include <vector>
 #include <atomic>
 
+#pragma once
+
 class BruteForcer {
 public:
     BruteForcer() = default;

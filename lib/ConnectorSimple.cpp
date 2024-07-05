@@ -12,7 +12,7 @@
 
 class ConnectorSimple : public ConnectorBase {
 protected:
-    [[nodiscard]] std::string mainreq(const std::string &req_enc) override{
+    [[nodiscard]] std::string mainreq(const std::string &req_enc){
         if (role == Role::Client) {
             throw incorrectRole("Client is not allowed to receive requests");
         }
@@ -82,7 +82,7 @@ public:
         rsaEncryptor = std::make_unique<RSAEncryptor>(cl.call("key").as<std::string>(), true);
     }
 
-    [[nodiscard]] std::string makeRequest(const std::string &req_json) override{
+    [[nodiscard]] std::string makeRequest(const std::string &req_json){
         if (getRole() == Role::Server) {
             throw incorrectRole("Server is not allowed to make requests");
         }

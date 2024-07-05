@@ -140,3 +140,5 @@ fabric.properties
 .idea
 .vs
 .vscode
+*.jpg
+*.h
