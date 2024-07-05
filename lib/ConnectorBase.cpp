@@ -10,7 +10,7 @@
 #pragma once
 
 
-class Connector {
+class ConnectorBase {
 public:
     enum class Role {
         Server,
@@ -20,7 +20,8 @@ public:
     public:
         using runtime_error::runtime_error;
     };
-private:
+
+protected:
     Role role;
     uint16_t port;
     std::string address;
@@ -44,47 +45,26 @@ private:
         return rsaEncryptor->getPublicKey();
     };
 
-    [[nodiscard]] std::string mainreq(const std::string &req_enc) {
-        if (role == Role::Client) {
-            throw incorrectRole("Client is not allowed to receive requests");
-        }
-        std::string enc_key = req_enc.substr(0, 512);
-        std::string keystr_t = rsaEncryptor->decrypt(enc_key);
-        std::string key = keystr_t.substr(0, 32);
-        std::string iv = keystr_t.substr(32);
-        AESEncryptor aes(key, iv);
-        std::string req = aes.decrypt(req_enc.substr(512));
-        nlohmann::json req_json = nlohmann::json::parse(req);
-        uniqueIDs.emplace(req_json["UUID"]);
-        uniqueAddresses.emplace(req_json["PublicIP"]);
-        expiringTimes.emplace_back(std::chrono::system_clock::now() + std::chrono::seconds(1));
-        std::string message = req_json["message"];
-        if (!message.contains("hello")) {
-            return aes.encrypt("fail");
-        } else {
-            return aes.encrypt("success " + message);
-        }
-    };
+    [[nodiscard]] virtual std::string mainreq(const std::string &req_enc) = 0;
 
 
 
 public:
-    Connector(uint16_t port, int threads) : port(port), connection(std::make_unique<rpc::server>(port)){
+
+    ConnectorBase() = default;
+    ConnectorBase(uint16_t port, int threads) : port(port), connection(std::make_unique<rpc::server>(port)){
         role = Role::Server;
         rsaEncryptor = std::make_unique<RSAEncryptor>(4096);
 
         connection->bind("key", [this](){
             return keyreq();
         });
-        connection->bind("request", [this](const std::string &req_enc){
-            return mainreq(req_enc);
-        });
         connection->async_run(threads);
         httplib::Client cli("http://api.ipify.org");
         PublicIP = cli.Get("/")->body;
     }
 
-    Connector(std::string address, uint16_t port) : port(port), address(std::move(address)) {
+    ConnectorBase(std::string address, uint16_t port) : port(port), address(std::move(address)) {
         role = Role::Client;
 
         std::string ckey, iv;
@@ -169,20 +149,7 @@ public:
         return rps;
     }
 
-    [[nodiscard]] std::string makeRequest(const std::string &req_json) {
-        if (getRole() == Role::Server) {
-            throw incorrectRole("Server is not allowed to make requests");
-        }
-        std::string enc_data = "";
-        enc_data += rsaEncryptor->encrypt(keystr);
-        nlohmann::json jdata = nlohmann::json::parse(req_json);
-        jdata["UUID"] = UUID;
-        jdata["PublicIP"] = PublicIP;
-        enc_data += aesEncryptor->encrypt(jdata.dump());
+    [[nodiscard]] virtual std::string makeRequest(const std::string &req_json) = 0;
 
-        rpc::client cl(address, port);
-        std::string enc_reply = cl.call("request", enc_data).as<std::string>();
-
-        return aesEncryptor->decrypt(enc_reply);
-    }
+    virtual ~ConnectorBase() = default;
 };

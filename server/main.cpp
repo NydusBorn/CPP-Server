@@ -5,7 +5,7 @@
 #include "imgui_impl_opengl3.h"
 #include <GLFW/glfw3.h>
 #include "implot.h"
-#include "../lib/Connector.cpp"
+#include "../lib/ConnectorSimple.cpp"
 
 //TODO: organise into library (another target), Imgui stays in demo, client and server just use the library (same one with differing options)
 
@@ -30,7 +30,7 @@ int main(int argc, char** argv) {
         started
     };
     auto current_state = window_state::configuration;
-    std::unique_ptr<Connector> server;
+    std::unique_ptr<ConnectorSimple> server;
     std::deque<double> times(1,0);
     std::deque<double> rps(1,0);
     auto start_time = std::chrono::steady_clock::now();
@@ -63,7 +63,7 @@ int main(int argc, char** argv) {
                     threads = 2048;
                 }
                 if (ImGui::Button("start")){
-                    server = std::make_unique<Connector>(port, threads);
+                    server = std::make_unique<ConnectorSimple>(port, threads);
                     current_state = window_state::started;
                     start_time = std::chrono::steady_clock::now();
                     break;

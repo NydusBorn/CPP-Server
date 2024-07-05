@@ -3,6 +3,8 @@
 #include <vector>
 #include <cstring>
 
+#pragma once
+
 class AESEncryptor {
 private:
     AES_KEY key;

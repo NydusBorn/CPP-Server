@@ -5,6 +5,8 @@
 #include <vector>
 #include <stdexcept>
 
+#pragma once
+
 class RSAEncryptor {
 private:
     RSA* rsa_keypair;

@@ -102,9 +102,11 @@ target_link_options(Encryptor PRIVATE
     -m64
 )
 target_sources(Encryptor PRIVATE
-    lib/Connector.cpp
     lib/AESEncryptor.cpp
     lib/RSAEncryptor.cpp
+    lib/BruteForcer.cpp
+    lib/ConnectorBase.cpp
+    lib/ConnectorSimple.cpp
 )
 
 # target
@@ -180,10 +182,7 @@ target_link_options(QtClient PRIVATE
     -m64
 )
 target_sources(QtClient PRIVATE
-    Qt/Client/faq.cpp
     Qt/Client/main.cpp
-    Qt/Client/mainwindow.cpp
-    Qt/Client/startwindow.cpp
 )
 
 # target
@@ -260,7 +259,6 @@ target_link_options(QtServer PRIVATE
 )
 target_sources(QtServer PRIVATE
     Qt/Server/main.cpp
-    Qt/Server/mainwindow.cpp
 )
 
 # target
