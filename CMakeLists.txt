@@ -160,8 +160,7 @@ target_sources(Encryptor PRIVATE
 )
 
 # target
-add_executable(QtBotnet ""
-        Qt/Botnet/main.cpp)
+add_executable(QtBotnet "")
 set_target_properties(QtBotnet PROPERTIES OUTPUT_NAME "QtBotnet")
 set_target_properties(QtBotnet PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/build/linux/x86_64/release")
 target_include_directories(QtBotnet PRIVATE
