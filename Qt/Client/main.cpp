@@ -6,9 +6,10 @@
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
+#include <QString>
 #include <iostream>
 #include <QTextEdit>
-#include "../../lib/Connector.cpp"
+#include "../../lib/ConnectorSimple.cpp"
 
 class MyForm : public QWidget
 {
@@ -22,31 +23,8 @@ public:
         QVBoxLayout *layoutV = new QVBoxLayout(this);
         QHBoxLayout *layoutH = new QHBoxLayout(this);
 
-        // QLabel *LabelError1 = new QLabel(this);
-        // LabelError1->setText("Состояние подключения: ");
-        // LabelError1->setStyleSheet("QLabel { font-weight: bold; color: salmon; font-size: 130%;}");
-        // QLabel *LabelError2 = new QLabel(this);
-        // LabelError2->setText("В активно поиске коннекта");
-        // QHBoxLayout *errorLayout = new QHBoxLayout;
-        // errorLayout->addWidget(LabelError1);
-        // errorLayout->addWidget(LabelError2);
-        // QLabel *label1 = new QLabel(this);
-        // label1->setText("Статус: В активном поиске коннекта");
-        // label1->setStyleSheet("QLabel{font-weight bolder;}");
-        // layoutV->addLayout(errorLayout);
-
-        // QLabel *label2 = new QLabel(this);
-        // label2->setText("Ошибки: Ошибок не обнаружено");
-        // layoutV->addWidget(label2);
-        // QLabel *LabelError3 = new QLabel(this);
-        // QLabel *LabelError4 = new QLabel(this);
-        // LabelError3->setText("Ошибки: ");
-        // LabelError4->setText("Ошибок не обнаружено");
-        // LabelError3->setStyleSheet("QLabel { font-weight: bold; color: salmon;font-size: 130%;}");
-        // QHBoxLayout *errorLayout2 = new QHBoxLayout;
-        // errorLayout2->addWidget(LabelError3);
-        // errorLayout2->addWidget(LabelError4);
-        // layoutV->addLayout(errorLayout2);
+        ip = "127.0.0.1";
+        port = 4000;
 
         QSpacerItem* VSpacer = new QSpacerItem(10,20,QSizePolicy::Minimum);//, QSizePolicy::Expanding); - нужно для пропорционального масштабирования при растягивании окна
         layoutV->addItem(VSpacer);
@@ -54,10 +32,8 @@ public:
         QHBoxLayout *textLayout = new QHBoxLayout;
         label3 = new QLabel(this);
         label3->setText("Сообщение на сервер: ");
-        // layoutV->addWidget(label3);
         label4 = new QLabel(this);
         label4->setText("Сообщение от сервера: ");
-        // layoutV->addWidget(label4);
         label3->setStyleSheet("QLabel { font-weight: bold; color: salmon;font-size: 130%;}");
         label4->setStyleSheet("QLabel { font-weight: bold; color: salmon;font-size: 130%;}");
         textLayout->addWidget(label3);
@@ -79,9 +55,9 @@ public:
 
         QHBoxLayout *buttonLayout = new QHBoxLayout;
         faqButton = new QPushButton(" ");
-        faqButton->setObjectName("startButton");
+        faqButton->setObjectName("faqButton");
         startButton = new QPushButton("Отправить");
-        startButton->setObjectName("faqButton");
+        startButton->setObjectName("startButton");
         exitButton = new QPushButton("Выйти");
         exitButton->setObjectName("exitButton");
         buttonLayout->addWidget(faqButton);
@@ -112,8 +88,16 @@ public:
         labelIp->setText("IP: ");
         labelPort->setText("Port: ");
         QHBoxLayout *hlay2 = new QHBoxLayout(this);
+
+        const QString &ip_const = QString::fromStdString(ip);
         TIP = new QLineEdit(this);
+        TIP->setText(ip_const);
+
+        std::string port_string = std::to_string(port);
+        const QString &port_const = QString::fromStdString(port_string);
         TPort = new QLineEdit(this);
+        TPort->setText(port_const);
+
         hlay2->addWidget(labelIp);
         hlay2->addWidget(TIP);
         hlay2->addWidget(labelPort);
@@ -126,20 +110,20 @@ public:
 protected:
     bool eventFilter(QObject *obj, QEvent *event) override
         {
+           
             if (obj == startButton && event->type() == QEvent::MouseButtonPress)
-            {
-                textEdit1->setPlainText("Технические характеристики BMW M5 седан F90:\nДвигатель: бензиновый, 8 цилиндров, 4 клапана на цилиндр, 4395 см³, V-образный.\nМаксимальная мощность: 625 л. с.\nМаксимальный крутящий момент: 750 Н∙м.\nКоробка передач: автоматическая, 8 передач.\nПривод: полный.\nМаксимальная скорость: 250 км/ч.\nВремя разгона до 100 км/ч: 3,3 с.\nРасход топлива: смешанный цикл — 10,8 л/100 км, городской цикл — 15,2 л/100 км, загородный цикл — 8,7 л/100 км.\nСтрана производства — Германия.");
-                textEdit2->setPlainText("BMW M5 стал на днях самым быстрым серийным седаном SIC.\n«Эмка» проехала круг за 2 минуты 22,828 секунды. Нам это, конечно, ни о чем не говорит, потому что мы не знаем даже, кто был «четырехдверным лидером» до М5. Известно, что абсолютный рекорд этой трассы — 1 минута 31,68 секунды и его установил Льюис Хэмилтон на болиде Ф-1 Mercedes AMG F1 W08 EQ Power+.");
-             }
+            { 
+                    ConnectorSimple client("127.0.0.1", 4000);
+                    std::map<std::string, std::string> data2 = {
+                        {"message", "hello"}
+                    };
+                    nlohmann::json data = data2;   
+                    const QString &port_const = QString::fromStdString(client.makeRequest(data.dump()));
+                    textEdit2->setText(port_const);
+            }
             else if (obj == faqButton && event->type() == QEvent::MouseButtonPress)
             {
-                // textEdit1->setPlainText(" Германия.");
-                // textEdit2->setPlainText("BMW M5");
 
-                // Создание нового пустого окна
-                // QWidget *emptyWindow = new QWidget();
-                // emptyWindow->resize(300,400);
-                // emptyWindow->show();
             }
             else if (obj == exitButton && event->type() == QEvent::MouseButtonPress)
             {
@@ -147,7 +131,6 @@ protected:
             }
             else if (obj == startButton2 && event->type() == QEvent::MouseButtonPress)
             {
-                // this->close();
                 startButton2->hide();
                 TIP->hide();
                 TPort->hide();
@@ -161,6 +144,9 @@ protected:
                 textEdit2->show();
                 label3->show();
                 label4->show();
+                port = (TPort->text()).toInt();
+                ip = (TIP->text()).toStdString();
+                
             }
             return QWidget::eventFilter(obj, event);
         }
@@ -181,68 +167,10 @@ private:
     QLabel *labelPort;
     QLineEdit *TIP;
     QLineEdit *TPort;
+    int port;
+    std::string ip;
 
 };
-
-class MyStartForm : public QWidget
-{
-
-public:
-    MyStartForm(QWidget *parent = nullptr) : QWidget(parent)
-    {
-
-        setWindowTitle("Granit-Client");
-
-        startButton = new QPushButton(this);
-        startButton->setText("Start");
-        startButton->setObjectName("startButton");
-        QLabel *labelIp = new QLabel(this);
-        QLabel *labelPort = new QLabel(this);
-        labelIp->setText("IP: ");
-        labelPort->setText("Port: ");
-        QVBoxLayout *hlay = new QVBoxLayout(this);
-        QHBoxLayout *hlay2 = new QHBoxLayout(this);
-        QLineEdit *TIP = new QLineEdit(this);
-        QLineEdit *TPort = new QLineEdit(this);
-        hlay2->addWidget(labelIp);
-        hlay2->addWidget(TIP);
-        hlay2->addWidget(labelPort);
-        hlay2->addWidget(TPort);
-        hlay->addWidget(startButton);
-        hlay->addLayout(hlay2);
-
-    }
-
-protected:
-    bool eventFilter(QObject *obj, QEvent *event) override
-        {
-            if (obj == startButton && event->type() == QEvent::MouseButtonPress)
-            {
-                this->close();
-            }
-
-            return QWidget::eventFilter(obj, event);
-        }
-
-
-private:
-    QPushButton *startButton;
-    // QTextEdit *textEdit1;
-    // QTextEdit *textEdit2;
-    // QLabel *FaqLabel1;
-    // QLabel *FaqLabel2;
-};
-
-
-void mesge(){
-    std::map<std::string, std::string> data2 = {
-        {"message", "hello"}
-    };
-    nlohmann::json data = data2;
-    int port = 4000;
-    Connector client("127.0.0.1",port);
-    std::cout << client.makeRequest(data.dump()) << std::endl;
-}
 
 
 int main(int argc, char *argv[])
