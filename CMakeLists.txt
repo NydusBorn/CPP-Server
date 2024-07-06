@@ -153,10 +153,87 @@ target_link_options(Encryptor PRIVATE
 target_sources(Encryptor PRIVATE
     lib/AESEncryptor.cpp
     lib/RSAEncryptor.cpp
-    lib/BruteForcer.cpp
     lib/ConnectorBase.cpp
     lib/ConnectorSimple.cpp
     lib/ConnectorBotnet.cpp
+    lib/BruteForcer.cpp
+)
+
+# target
+add_executable(QtBotnet ""
+        Qt/Botnet/main.cpp)
+set_target_properties(QtBotnet PROPERTIES OUTPUT_NAME "QtBotnet")
+set_target_properties(QtBotnet PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/build/linux/x86_64/release")
+target_include_directories(QtBotnet PRIVATE
+    build/.gens/QtBotnet/linux/x86_64/release/rules/qt/ui
+)
+target_include_directories(QtBotnet SYSTEM PRIVATE
+    /usr/include/qt6/QtGui
+    /usr/include/qt6/QtGui/6.7.2
+    /usr/include/qt6/QtGui/6.7.2/QtGui
+    /usr/include/qt6/QtWidgets
+    /usr/include/qt6/QtWidgets/6.7.2
+    /usr/include/qt6/QtWidgets/6.7.2/QtWidgets
+    /usr/include/qt6/QtCore
+    /usr/include/qt6/QtCore/6.7.2
+    /usr/include/qt6/QtCore/6.7.2/QtCore
+    /usr/include/qt6
+    /usr/lib64/qt6/mkspecs/linux-g++
+    /home/nydus/.xmake/packages/r/rpclib/v2.3.0/cd9a29cac23a478da714214c55a59c0c/include
+    /home/nydus/.xmake/packages/n/nlohmann_json/v3.11.3/ec1183311a224b34b5c138edda96fdde/include
+    /home/nydus/.xmake/packages/o/openssl3/3.0.7/8aaa08615b8740ada8faf167c0cbf065/include
+    /home/nydus/.xmake/packages/c/cpp-httplib/0.15.3/10d0838bab72482e8b727994616a9af6/include
+)
+target_compile_definitions(QtBotnet PRIVATE
+    QT_NO_DEBUG
+    QT_DEPRECATED_WARNINGS
+    QT_GUI_LIB
+    QT_WIDGETS_LIB
+    QT_CORE_LIB
+)
+target_compile_options(QtBotnet PRIVATE
+    $<$<COMPILE_LANGUAGE:C>:-m64>
+    $<$<COMPILE_LANGUAGE:CXX>:-m64>
+    $<$<COMPILE_LANGUAGE:C>:-DNDEBUG>
+    $<$<COMPILE_LANGUAGE:CXX>:-DNDEBUG>
+    $<$<COMPILE_LANGUAGE:C>:-fPIC>
+    $<$<COMPILE_LANGUAGE:CXX>:-fPIC>
+)
+set_target_properties(QtBotnet PROPERTIES CXX_EXTENSIONS OFF)
+target_compile_features(QtBotnet PRIVATE cxx_std_23)
+if(MSVC)
+    target_compile_options(QtBotnet PRIVATE $<$<CONFIG:Release>:-Ox -fp:fast>)
+else()
+    target_compile_options(QtBotnet PRIVATE -O3)
+endif()
+if(MSVC)
+else()
+    target_compile_options(QtBotnet PRIVATE -fvisibility=hidden)
+endif()
+if(MSVC)
+    set_property(TARGET QtBotnet PROPERTY
+        MSVC_RUNTIME_LIBRARY "MultiThreadedDLL")
+endif()
+target_link_libraries(QtBotnet PRIVATE
+    rpc
+    ssl
+    crypto
+    Qt6Gui
+    Qt6Widgets
+    Qt6Core
+    pthread
+    dl
+)
+target_link_directories(QtBotnet PRIVATE
+    /usr/lib64
+    /home/nydus/.xmake/packages/r/rpclib/v2.3.0/cd9a29cac23a478da714214c55a59c0c/lib
+    /home/nydus/.xmake/packages/o/openssl3/3.0.7/8aaa08615b8740ada8faf167c0cbf065/lib64
+)
+target_link_options(QtBotnet PRIVATE
+    -m64
+)
+target_sources(QtBotnet PRIVATE
+    Qt/Botnet/main.cpp
 )
 
 # target
