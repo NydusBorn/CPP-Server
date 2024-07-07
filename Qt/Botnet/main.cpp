@@ -39,8 +39,10 @@ private:
         dialog.setNameFilter("Image (*.jpg)");
         dialog.setViewMode(QFileDialog::Detail);
         if (dialog.exec()){
-            QString filename = dialog.selectedFiles().at(0);
-            px->save(filename);
+            auto result = sv->getDecrypted();
+            auto out = std::ofstream (dialog.selectedFiles().at(0).toStdString());
+            out.write(result.data(), result.size());
+            out.close();
         }
     }
 public:
