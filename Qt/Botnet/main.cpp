@@ -19,7 +19,7 @@
 #include "QFileDialog"
 
 class BotnetServer : public QWidget{
-protected:
+private:
     std::unique_ptr<QVBoxLayout> lay;
     std::chrono::time_point<std::chrono::system_clock> start_time;
     std::vector<std::jthread> threads;
@@ -76,8 +76,8 @@ public:
                 px = std::make_unique<QPixmap>(200, 200);
                 std::chrono::time_point<std::chrono::system_clock> current_time = std::chrono::system_clock::now();
                 std::chrono::duration<double> elapsed_seconds = current_time - start_time;
-                int complete = checksum::fileChecksum.size() - sv->getIncompleteCount();
-                stat_complete->setText(std::format("Completed chunks: {} out of {} [{:.2f}%]", complete, checksum::fileChecksum.size(), static_cast<double>(100) * complete / checksum::fileChecksum.size()).c_str());
+                auto complete = static_cast<int>(checksum::fileChecksum.size() - sv->getIncompleteCount());
+                stat_complete->setText(std::format("Completed chunks: {} out of {} [{:.2f}%]", complete, checksum::fileChecksum.size(), static_cast<double>(100) * complete / static_cast<double>(checksum::fileChecksum.size())).c_str());
                 double speed = complete / elapsed_seconds.count();
                 if (speed < 1){
                     stat_speed->setText(std::format("Speed: {:.2f} s/chunk", 1/speed).c_str());
@@ -103,7 +103,7 @@ public:
 };
 
 class BotnetServerStarter : public QWidget{
-protected:
+private:
     std::unique_ptr<QVBoxLayout> lay;
     std::unique_ptr<QLabel> port_label;
     std::unique_ptr<QLineEdit> port;
@@ -154,7 +154,7 @@ public:
 };
 
 class BotnetClient : public QWidget{
-protected:
+private:
     std::unique_ptr<QVBoxLayout> lay;
     std::chrono::time_point<std::chrono::system_clock> start_time;
     int complete = 0;
@@ -206,7 +206,7 @@ public:
 };
 
 class BotnetClientStarter : public QWidget{
-protected:
+private:
     std::unique_ptr<QVBoxLayout> lay;
     std::unique_ptr<QLabel> address_label;
     std::unique_ptr<QLineEdit> address;
@@ -264,7 +264,7 @@ public:
 };
 
 class BotnetStarter : public QWidget{
-protected:
+private:
     std::unique_ptr<QHBoxLayout> lay;
     std::unique_ptr<QPushButton> svb;
     std::unique_ptr<QPushButton> clb;
@@ -281,7 +281,7 @@ protected:
         conf->show();
     }
 public:
-    BotnetStarter(QWidget *parent = nullptr) : QWidget(parent){
+    explicit BotnetStarter(QWidget *parent = nullptr) : QWidget(parent){
         setWindowTitle("Role Configuration");
         setFixedWidth(400);
         lay = std::make_unique<QHBoxLayout>(this);

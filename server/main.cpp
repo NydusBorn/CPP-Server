@@ -7,8 +7,6 @@
 #include "implot.h"
 #include "../lib/ConnectorSimple.cpp"
 
-//TODO: organise into library (another target), Imgui stays in demo, client and server just use the library (same one with differing options)
-
 int main(int argc, char** argv) {
     int port = 4000;
     int threads = 4;
@@ -77,8 +75,8 @@ int main(int argc, char** argv) {
                 ImGui::Text("Public IP of this server: %s:%d", server->getPublicIP().c_str(), server->getPort());
                 ImGui::Text("Threads: %d", threads);
 
-                ImGui::Text("Unique client IDs seen this session: %d", server->getUniqueIDs());
-                ImGui::Text("Unique client IPs seen this session: %d", server->getUniqueAddresses());
+                ImGui::Text("Unique client IDs seen this session: %ld", server->getUniqueIDs());
+                ImGui::Text("Unique client IPs seen this session: %ld", server->getUniqueAddresses());
 
                 if (times.size() > 500){
                     times.pop_front();

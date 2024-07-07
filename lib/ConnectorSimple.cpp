@@ -52,12 +52,13 @@ public:
         PublicIP = cli.Get("/")->body;
     }
 
-    ConnectorSimple(std::string address, uint16_t port){
+    ConnectorSimple(const std::string& address, uint16_t port){
         role = Role::Client;
         this->port = port;
         this->address = address;
 
-        std::string ckey, iv;
+        std::string ckey;
+        std::string iv;
         {
             std::random_device dev;
             std::mt19937 rng(dev());

@@ -33,10 +33,17 @@ protected:
     std::string PublicIP;
     std::string UUID;
 
-    std::unordered_set<std::string> uniqueAddresses;
-    std::unordered_set<std::string> uniqueIDs;
-    std::vector<std::chrono::time_point<std::chrono::system_clock>> expiringTimes;
+    struct StringHash {
+        using is_transparent = void; // Enables heterogeneous operations.
 
+        std::size_t operator()(std::string_view sv) const {
+            std::hash<std::string_view> hasher;
+            return hasher(sv);
+        }
+    };
+    std::unordered_set<std::string, StringHash, std::equal_to<>> uniqueAddresses;
+    std::unordered_set<std::string, StringHash, std::equal_to<>> uniqueIDs;
+    std::vector<std::chrono::time_point<std::chrono::system_clock>> expiringTimes;
 
     [[nodiscard]] std::string keyreq() const {
         if (role == Role::Client) {
@@ -63,7 +70,8 @@ public:
     ConnectorBase(std::string address, uint16_t port) : port(port), address(std::move(address)) {
         role = Role::Client;
 
-        std::string ckey, iv;
+        std::string ckey;
+        std::string iv;
         {
             std::random_device dev;
             std::mt19937 rng(dev());
@@ -114,14 +122,14 @@ public:
         return this->PublicIP;
     }
 
-    [[nodiscard]] int getUniqueAddresses() {
+    [[nodiscard]] uint64_t getUniqueAddresses() {
         if (role == Role::Client) {
             throw incorrectRole("Client is not capable of collecting statistics");
         }
         return this->uniqueAddresses.size();
     }
 
-    [[nodiscard]] int getUniqueIDs() {
+    [[nodiscard]] uint64_t getUniqueIDs() {
         if (role == Role::Client) {
             throw incorrectRole("Client is not capable of collecting statistics");
         }
