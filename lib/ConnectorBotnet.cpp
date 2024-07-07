@@ -90,7 +90,7 @@ public:
         rsaEncryptor = std::make_unique<RSAEncryptor>(4096);
 
         for (int i = 0; i < checksum::fileChecksum.size()*3; i++){
-            decrypted.emplace_back(i);
+            decrypted.emplace_back(0);
         }
         for (int i = 0; i < checksum::fileChecksum.size(); i++){
             incompleteChunks.insert(i);
@@ -172,6 +172,13 @@ public:
         enc_data += aesEncryptor->encrypt(jdata.dump());
         cl.call("submit", enc_data);
         return true;
+    }
+
+    [[nodiscard]] int getIncompleteCount(){
+        if (getRole() == Role::Client) {
+            throw incorrectRole("Client is not allowed to get incomplete chunks");
+        }
+        return incompleteChunks.size();
     }
 
     [[nodiscard]] std::vector<char> getDecrypted(){
