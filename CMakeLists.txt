@@ -157,6 +157,7 @@ target_sources(Encryptor PRIVATE
     lib/ConnectorSimple.cpp
     lib/ConnectorBotnet.cpp
     lib/BruteForcer.cpp
+    lib/MapDecryptor.cpp
 )
 
 # target

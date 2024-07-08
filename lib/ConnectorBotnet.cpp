@@ -1,5 +1,6 @@
 #include "ConnectorBase.cpp"
-#include "BruteForcer.cpp"
+//#include "BruteForcer.cpp"
+#include "MapDecryptor.cpp"
 #include "fileChecksum.h"
 
 class ConnectorBotnet : public ConnectorBase{
@@ -160,7 +161,7 @@ public:
         auto tjdata = nlohmann::json::parse(reply);
         jdata["ID"] = tjdata["ID"];
         std::string task = tjdata["task"];
-        auto complete = BruteForcer::brute_force_block(task);
+        auto complete = MapDecryptor::map_block(task);
 
         std::vector<int> bytes;
         for (int i = 0; i < 3; i++){
