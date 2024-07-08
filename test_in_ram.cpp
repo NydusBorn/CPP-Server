@@ -5,7 +5,6 @@
 #include <iomanip>
 #include <openssl/md5.h>
 
-// Function to compute MD5 hash
 std::string md5(const std::string& str) {
     unsigned char digest[MD5_DIGEST_LENGTH];
     MD5(reinterpret_cast<const unsigned char*>(str.c_str()), str.size(), digest);
@@ -17,7 +16,6 @@ std::string md5(const std::string& str) {
     return oss.str();
 }
 
-// Function to generate all 3-byte combinations and their MD5 hashes at compile time
 constexpr auto generate3ByteMD5Map() {
     std::array<std::pair<std::string, std::string>, 256 * 256 * 256> map{};
     size_t index = 0;
@@ -40,7 +38,6 @@ constexpr auto generate3ByteMD5Map() {
 constexpr auto md5Map = generate3ByteMD5Map();
 
 int main() {
-    // Example output of some values from the map
     int count = 0;
     for (const auto& pair : md5Map) {
         std::cout << "MD5: " << pair.first << " - Combination: "
@@ -48,7 +45,7 @@ int main() {
                   << std::setw(2) << std::setfill('0') << static_cast<int>(pair.second[1])
                   << std::setw(2) << std::setfill('0') << static_cast<int>(pair.second[2])
                   << std::dec << std::endl;
-        if (++count >= 10) break; // Limit output to the first 10 entries
+        if (++count >= 10) break; 
     }
 
     return 0;
