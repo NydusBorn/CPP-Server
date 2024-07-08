@@ -1,5 +1,6 @@
 #include "BruteForcer.cpp"
 #include "unordered_map"
+#include "iostream"
 
 #pragma once
 
@@ -42,9 +43,9 @@ public:
         std::vector<char> result(3);  // Результат в виде вектора
 
         if (md5Map.contains(checksum)) {
-            result.emplace_back(md5Map.at(checksum)[0]);
-            result.emplace_back(md5Map.at(checksum)[1]);
-            result.emplace_back(md5Map.at(checksum)[2]);
+            result[0] = md5Map.at(checksum)[0];
+            result[1] = md5Map.at(checksum)[1];
+            result[2] = md5Map.at(checksum)[2];
             return result;
         } else {
             return {};  // Возвращаем пустой вектор, если блок не найден

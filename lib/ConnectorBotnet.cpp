@@ -1,5 +1,4 @@
 #include "ConnectorBase.cpp"
-//#include "BruteForcer.cpp"
 #include "MapDecryptor.cpp"
 #include "fileChecksum.h"
 

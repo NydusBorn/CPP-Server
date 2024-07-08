@@ -3,7 +3,6 @@
 #include "QApplication"
 #include "QHBoxLayout"
 #include "QPushButton"
-#include "QPointer"
 #include "iostream"
 #include "QLineEdit"
 #include "QValidator"
@@ -13,10 +12,11 @@
 #include "format"
 #include "QString"
 #include "../../lib/ConnectorBotnet.cpp"
-#include "QPicture"
 #include "QImage"
 #include "QPixmap"
 #include "QFileDialog"
+#include "QDataStream"
+#include "QByteArray"
 
 class BotnetServer : public QWidget{
 private:
@@ -36,6 +36,7 @@ private:
     void save(){
         QFileDialog dialog(this);
         dialog.setFileMode(QFileDialog::AnyFile);
+        dialog.setAcceptMode(QFileDialog::AcceptSave);
         dialog.setNameFilter("Image (*.jpg)");
         dialog.setViewMode(QFileDialog::Detail);
         if (dialog.exec()){
@@ -51,6 +52,7 @@ public:
         setFixedWidth(600);
         setFixedHeight(400);
         sv = std::make_unique<ConnectorBotnet>(port, thread_count);
+        px = std::make_unique<QPixmap>(500, 200);
         start_time = std::chrono::system_clock::now();
         lay = std::make_unique<QVBoxLayout>(this);
         lay->setAlignment(Qt::AlignCenter);
@@ -61,7 +63,7 @@ public:
         stat_unique_id = std::make_unique<QLabel>("Seen unique IDs: ");
         stat_unique_ip = std::make_unique<QLabel>("Seen unique IPs: ");
         decrypted = std::make_unique<QLabel>();
-        decrypted->setFixedWidth(200);
+        decrypted->setFixedWidth(500);
         decrypted->setFixedHeight(200);
         lay->addWidget(info.get());
         lay->addWidget(stat_unique_ip.get());
@@ -73,9 +75,9 @@ public:
         connect(savebtn.get(), &QPushButton::clicked, this, &BotnetServer::save);
         lay->addWidget(savebtn.get());
         threads.emplace_back([this](){
+            bool next_done = false;
             while (true){
                 std::this_thread::sleep_for(std::chrono::milliseconds (1000 / 60));
-                px = std::make_unique<QPixmap>(200, 200);
                 std::chrono::time_point<std::chrono::system_clock> current_time = std::chrono::system_clock::now();
                 std::chrono::duration<double> elapsed_seconds = current_time - start_time;
                 auto complete = static_cast<int>(checksum::fileChecksum.size() - sv->getIncompleteCount());
@@ -90,15 +92,29 @@ public:
                 stat_unique_id->setText(std::format("Seen unique IDs: {}", sv->getUniqueIDs()).c_str());
                 stat_unique_ip->setText(std::format("Seen unique IPs: {}", sv->getUniqueAddresses()).c_str());
                 auto pic = sv->getDecrypted();
-                bool success = px->loadFromData(pic.data(), "JPG");
-                if (success){
-                    decrypted->setPixmap(*px);
+                QImage image(500, 200, QImage::Format_RGB888);
+                std::random_device rd;
+                std::mt19937 gen(rd());
+                while (pic.size() < image.sizeInBytes()){
+                    auto mod = sv->getDecrypted();
+                    for (int j = 0; j < mod.size(); j++){
+                        pic.emplace_back(mod[j]);
+                    }
+                }
+                std::shuffle(pic.begin(), pic.end(), gen);
+                memcpy(image.bits(), pic.data(), std::min(pic.size(), uint64_t(image.sizeInBytes())));
+                QPixmap pixmap = QPixmap::fromImage(image);
+                px = std::make_unique<QPixmap>(pixmap);
+                decrypted->setPixmap(*px);
+                if (next_done)break;
+                if (sv->getIncompleteCount() == 0){
                     savebtn->setEnabled(true);
+                    next_done = true;
                 }
                 else{
-                    decrypted->setText("Failed to load image");
                     savebtn->setEnabled(false);
                 }
+
             }
         });
     }
@@ -161,9 +177,11 @@ private:
     std::chrono::time_point<std::chrono::system_clock> start_time;
     int complete = 0;
     std::vector<std::jthread> threads;
+    int exited = 0;
     std::unique_ptr<QLabel> info;
     std::unique_ptr<QLabel> stat_complete;
     std::unique_ptr<QLabel> stat_speed;
+    std::mutex mutex;
 public:
     BotnetClient(int thread_count, std::string address, int port) : QWidget(){
         setWindowTitle("Botnet Client");
@@ -186,11 +204,14 @@ public:
                     if (!cl->makeRequest()) break;
                     complete++;
                 }
+                std::scoped_lock lock(mutex);
+                exited += 1;
             });
         }
         threads.emplace_back([this](){
             while (true){
                 std::this_thread::sleep_for(std::chrono::milliseconds (1000 / 60));
+                std::scoped_lock lock(mutex);
                 std::chrono::time_point<std::chrono::system_clock> current_time = std::chrono::system_clock::now();
                 std::chrono::duration<double> elapsed_seconds = current_time - start_time;
                 stat_complete->setText(std::format("Completed chunks: {}", complete).c_str());
@@ -201,7 +222,9 @@ public:
                 else{
                     stat_speed->setText(std::format("Speed: {:.2f} Chunks/s", speed).c_str());
                 }
-
+                if (threads.size() - 1 == exited){
+                    break;
+                }
             }
         });
     }
