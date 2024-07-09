@@ -12,6 +12,10 @@
 #include <nlohmann/json.hpp>
 #include <QPen>
 #include <QTimer>
+#include <cmath>
+
+
+
 
 
 class MyServer : public QWidget
@@ -24,12 +28,12 @@ public:
         port = 4000;
         thread1 =  4;
         server = std::make_unique<ConnectorSimple>(port,thread1);
-        // std::unique_ptr<ConnectorSimple> server2 = std::make_unique<ConnectorSimple>(port,threads);
 
-        QVBoxLayout *layout = new QVBoxLayout(this);
+        layout = new QVBoxLayout(this);
 
-        QLabel *label = new QLabel(this);
+        label = new QLabel(this);
         label->setText("Введи port: ");
+        label->setStyleSheet("QLabel { font-weight: bold; color: salmon;font-size: 130%;}");
         layout->addWidget(label);
 
         std::string port_string = std::to_string(port);
@@ -38,8 +42,9 @@ public:
         lineEdit->setText(port_const);
         layout->addWidget(lineEdit);
         
-        QLabel *label2 = new QLabel(this);
+        label2 = new QLabel(this);
         label2->setText("Введи количество threads: ");
+        label2->setStyleSheet("QLabel { font-weight: bold; color: salmon;font-size: 130%;}");
         layout->addWidget(label2);
 
         std::string threads_string = std::to_string(thread1);
@@ -51,24 +56,22 @@ public:
         startButt = new QPushButton("Start",this);
         startButt->setObjectName("startButt");
         startButt->installEventFilter(this);
+        startButt->setStyleSheet("QPushButton{background-color: salmon;color:bisque;}");
         layout->addWidget(startButt);
 
-        QComboBox *comboBox = new QComboBox(this);
-        layout->addWidget(comboBox);
-
-        int uniqint = server->getUniqueIDs();
+        ipLabel = new QLabel(this);
+        idLabel = new QLabel(this);
         uniqID = new QLabel(this);
-        QLabel *uniqIP = new QLabel(this);
-        std::string uniqID_int = std::to_string(uniqint);
-        const QString &uniqID_const = QString::fromStdString(uniqID_int);
-        uniqID->setText(uniqID_const);
+        uniqIP = new QLabel(this);
+        layout->addWidget(uniqIP);
         layout->addWidget(uniqID);
+        layout->addWidget(ipLabel);
+        layout->addWidget(idLabel);
+        uniqID->hide();
+        uniqIP->hide();
 
-        timer = new QTimer(this);
-        connect(timer, &QTimer::timeout, this, &MyServer::updateUniqueIDs);
-        timer->start(1000);
-        
     }
+
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event) override
@@ -78,37 +81,24 @@ protected:
             { 
                 port = (lineEdit->text()).toInt();
                 thread1 = (lineEdit2->text()).toInt();
-                // int pre_port = 4000;
-                // port = &pre_port;
-                // int pre_threads = 4;
-                // threads = &pre_threads;
-                // std::unique_ptr<ConnectorSimple> server2 = std::make_unique<ConnectorSimple>(port,threads);
+                
+                lineEdit2->hide();
+                lineEdit->hide();
+                label->hide();
+                label2->hide();
+                this->resize(400,200);
+                idLabel->setText("Port: "+lineEdit->text());
+                ipLabel->setText("Threads: "+lineEdit2->text());
+                uniqID->show();
+                uniqIP->show();
+                startButt->hide();
+
+                timer = new QTimer(this);
+                connect(timer, &QTimer::timeout, this, &MyServer::updateUniqueIDs);
+                timer->start(500);//раз в пол секунды обновляем значение 
             }
             return QWidget::eventFilter(obj, event);
         }
-    //  void paintEvent(QPaintEvent* event) override {
-    //     Q_UNUSED(event);
-    //     QPainter *painter = new QPainter(this);
-    //     painter->setRenderHint(QPainter::Antialiasing);
-
-    //     QVector<double> timeValues = {0.0, 1.0, 2.0, 3.0}; // Время в секундах
-    //     QVector<int> paramValues = {10, 20, 15, 30}; // Параметр request
-
-    //     QRectF plotRect(20, 20, width() - 40, height() - 40);
-
-    //     QPen pen(Qt::blue);
-    //     pen.setWidth(2);
-    //     painter->setPen(pen);
-
-    //     // Строим график
-    //     for (int i = 1; i < timeValues.size(); ++i) {
-    //         QPointF p1(plotRect.left() + timeValues[i - 1] * plotRect.width(),
-    //                     plotRect.bottom() - paramValues[i - 1] * plotRect.height() / 50.0);
-    //         QPointF p2(plotRect.left() + timeValues[i] * plotRect.width(),
-    //                     plotRect.bottom() - paramValues[i] * plotRect.height() / 50.0);
-    //         painter->drawLine(p1, p2);
-    //     }
-    // }
 private slots:
     void updateUniqueIDs()
     {
@@ -116,15 +106,29 @@ private slots:
         std::string uniqID_int = std::to_string(uniqint);
         const QString& uniqID_const = QString::fromStdString(uniqID_int);
         uniqID->setText("UniqID count: " + uniqID_const);
+
+        int uniqintIP = server->getUniqueAddresses();
+        std::string uniqIP_int = std::to_string(uniqintIP);
+        const QString &uniqIP_const = QString::fromStdString(uniqIP_int);
+        uniqIP->setText("UniqIP count: " + uniqIP_const);
+
     }
 private:
     QPushButton *startButt;
     int port;
     int thread1;
+    QLabel *label;
+    QLabel *label2;
     QLineEdit *lineEdit2;
     QLineEdit *lineEdit;
     QTimer* timer;
+    QVBoxLayout *layout;
     QLabel *uniqID;
+    QPainter *painter;
+    QPen *pen;
+    QLabel *uniqIP;
+    QLabel *ipLabel;
+    QLabel *idLabel;
     std::unique_ptr<ConnectorSimple> server;
 
 };
